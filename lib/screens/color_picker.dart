@@ -1,25 +1,33 @@
 import 'dart:math';
 import 'package:color_picker_android/commons/colors.dart';
 import 'package:color_picker_android/commons/constant.dart';
-import 'package:color_picker_android/commons/themes.dart';
 import 'package:color_picker_android/widgets/w_divider.dart';
 import 'package:color_picker_android/widgets/w_text_content.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class BackgroundColorPicker extends StatefulWidget {
   final Color currentColor;
   final Function(Color) onColorChange;
+
+  /// color of tracker thumb of slider
   final Color? trackerSliderColor;
+
+  /// font text of title, content
   final String? fontFamily;
+
+  /// size of dot board
   final double? dotHSVSize;
+
+  /// color of preview container
+  final Color? colorBorderPreview;
   const BackgroundColorPicker(
       {super.key,
       required this.currentColor,
       required this.onColorChange,
       this.trackerSliderColor,
       this.fontFamily,
-      this.dotHSVSize});
+      this.dotHSVSize,
+      this.colorBorderPreview});
 
   @override
   State<BackgroundColorPicker> createState() => _BackgroundColorPickerState();
@@ -250,9 +258,7 @@ class _BackgroundColorPickerState extends State<BackgroundColorPicker> {
                             _hsvAlpha, _hsvHue, _hsvSaturation, _hsvValue)
                         .toColor(),
                     border: Border.all(
-                        color: Provider.of<ThemeManager>(context).isDarkMode
-                            ? colorWhite
-                            : colorBlack,
+                        color: widget.colorBorderPreview ?? colorBlack,
                         width: 0.2),
                     borderRadius:
                         BorderRadius.circular(sizeOfPreviewColor / 2)),
