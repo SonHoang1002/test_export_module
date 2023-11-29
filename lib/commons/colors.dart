@@ -32,4 +32,12 @@ const Color colorabc = Color(0XFFFF3F33);
 
 // const Color colorLight2Blue = Color(0xFF84B5FF);
 
+const Color guidePrimary = Color(0xFF6200EE);
+const Color guidePrimaryVariant = Color(0xFF3700B3);
+const Color guideSecondary = Color(0xFF03DAC6);
+const Color guideSecondaryVariant = Color(0xFF018786);
+const Color guideError = Color(0xFFB00020);
+const Color guideErrorDark = Color(0xFFCF6679);
+const Color blueBlues = Color(0xFF174378);
+
 
