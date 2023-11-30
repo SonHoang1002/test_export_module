@@ -1,1 +1,1 @@
-export './screens/color_picker.dart';
+export './screens/color_picker_1.dart';

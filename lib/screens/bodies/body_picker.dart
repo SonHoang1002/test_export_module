@@ -2,16 +2,16 @@ import 'dart:math';
 
 import 'package:color_picker_android/commons/colors.dart';
 import 'package:color_picker_android/commons/constant.dart';
-import 'package:color_picker_android/widgets/w_divider.dart';
+import 'package:color_picker_android/helpers/contain_offset.dart';
+import 'package:color_picker_android/widgets/w_slider_color.dart';
 import 'package:color_picker_android/widgets/w_text_content.dart';
 import 'package:flutter/material.dart';
 
 class BodyPicker extends StatefulWidget {
-  // final Color currentColor;
-  const BodyPicker({
-    super.key,
-    // required this.currentColor,
-  });
+  final Color currentColor;
+  final Function(Color color) onColorChange;
+  const BodyPicker(
+      {super.key, required this.currentColor, required this.onColorChange});
 
   @override
   State<BodyPicker> createState() => _BodyPickerState();
@@ -20,9 +20,9 @@ class BodyPicker extends StatefulWidget {
 class _BodyPickerState extends State<BodyPicker> {
   final double sizeOfPreviewColor = 40;
   late Size _size;
-  double _dotSize = 20;
+  double _dotSize = 30;
   Offset _offsetTrackerCursor = const Offset(0, 0);
-  Offset _offsetDotHSV = const Offset(-10, -10);
+  Offset _offsetDotHSV = const Offset(0, 0);
 
   final GlobalKey _keySlider = GlobalKey(debugLabel: "keySlider");
   final GlobalKey _keyHSVBoard = GlobalKey(debugLabel: "_keyHSVBoard");
@@ -33,7 +33,7 @@ class _BodyPickerState extends State<BodyPicker> {
   bool? _isInsideSlider;
 
   // hsv properties
-  double _hsvAlpha = 1.0;
+  final double _hsvAlpha = 1.0;
   double _hsvHue = 0.0;
   double _hsvSaturation = 0.0;
   double _hsvValue = 1.0;
@@ -42,7 +42,7 @@ class _BodyPickerState extends State<BodyPicker> {
   @override
   void initState() {
     super.initState();
-    final hsvColor = HSVColor.fromColor(colorWhite);
+    final hsvColor = HSVColor.fromColor(widget.currentColor);
     _hsvHue = hsvColor.hue;
     _hsvSaturation = hsvColor.saturation;
     _hsvValue = hsvColor.value;
@@ -56,21 +56,21 @@ class _BodyPickerState extends State<BodyPicker> {
   }
 
   void _onColorChanged() {
-    // widget.onColorChange(
-    //     HSVColor.fromAHSV(_hsvAlpha, _hsvHue, _hsvSaturation, _hsvValue)
-    //         .toColor());
+    widget.onColorChange(
+        HSVColor.fromAHSV(_hsvAlpha, _hsvHue, _hsvSaturation, _hsvValue)
+            .toColor());
   }
 
   void _changePositionWithHSVColor(HSVColor hsvColor) {
     if (_renderBoxHSVBoard != null) {
       _offsetDotHSV = Offset(
-        hsvColor.saturation * _renderBoxHSVBoard!.size.width,
+        hsvColor.saturation * (_renderBoxHSVBoard!.size.width - _dotSize),
         (1 - hsvColor.value) * _renderBoxHSVBoard!.size.height,
-      ).translate(-_dotSize / 2, -_dotSize / 2);
+      );
     }
     if (_renderBoxSlider != null) {
       _offsetTrackerCursor = Offset(
-        hsvColor.hue / 360 * _renderBoxSlider!.size.width,
+        hsvColor.hue / 360 * (_renderBoxSlider!.size.width - _dotSize),
         _renderBoxSlider!.size.height,
       );
     }
@@ -84,18 +84,16 @@ class _BodyPickerState extends State<BodyPicker> {
   void _updatePositionAndHSVProperty(Offset cursorGlobalPosition) {
     if (_renderBoxHSVBoard != null && _isInsideHSVBoard == true) {
       Size size = Size(
-        _renderBoxHSVBoard!.size.width - _dotSize / 2,
-        _renderBoxHSVBoard!.size.height - _dotSize / 2,
+        _renderBoxHSVBoard!.size.width,
+        _renderBoxHSVBoard!.size.height,
       );
       final newOffset = _renderBoxHSVBoard!.globalToLocal(cursorGlobalPosition);
       _offsetDotHSV = Offset(
-        max(0 - _dotSize / 2, min(newOffset.dx, size.width)),
-        max(0 - _dotSize / 2, min(newOffset.dy, size.height)),
+        max(0, min(newOffset.dx, size.width)),
+        max(0, min(newOffset.dy, size.height)),
       );
-      _hsvValue =
-          1 - (_offsetDotHSV.dy + _dotSize / 2) / (size.height + _dotSize / 2);
-      _hsvSaturation =
-          (_offsetDotHSV.dx + _dotSize / 2) / (size.width + _dotSize / 2);
+      _hsvValue = 1 - (_offsetDotHSV.dy) / (size.height);
+      _hsvSaturation = (_offsetDotHSV.dx) / (size.width);
     }
     if (_renderBoxSlider != null && _isInsideSlider == true) {
       // khong cho thay doi khi s va v dang o limit
@@ -107,28 +105,16 @@ class _BodyPickerState extends State<BodyPicker> {
         final cursorLocalPosition =
             _renderBoxSlider!.globalToLocal(cursorGlobalPosition);
         Offset newOffset = Offset(
-          max(0, min(cursorLocalPosition.dx, size.width)),
+          max(0, min(cursorLocalPosition.dx, size.width - _dotSize)),
           max(0, min(cursorLocalPosition.dy, size.height)),
         );
-        final newHue = (newOffset.dx) / (size.width - _dotSize / 2) * 360;
-        if (newHue > 359) {
-          _hsvHue = 0;
-          newOffset = const Offset(0, 0);
-        } else {
-          _hsvHue = newHue;
-        }
+        final newHue = (newOffset.dx) / (size.width - _dotSize) * 360;
+        _hsvHue = newHue;
         _offsetTrackerCursor = newOffset;
       }
     }
     _onColorChanged();
     setState(() {});
-  }
-
-  bool _containOffset(
-      Offset checkOffset, Offset startOffset, Offset endOffset) {
-    return (startOffset.dx <= checkOffset.dx &&
-            checkOffset.dx <= endOffset.dx) &&
-        (startOffset.dy <= checkOffset.dy && checkOffset.dy <= endOffset.dy);
   }
 
   void _checkInside(Offset cursorGlobalPosition) {
@@ -137,7 +123,7 @@ class _BodyPickerState extends State<BodyPicker> {
           _renderBoxHSVBoard!.localToGlobal(const Offset(0, 0));
       final endOffsetHSVBoard = startOffsetHSVBoard.translate(
           _renderBoxHSVBoard!.size.width, _renderBoxHSVBoard!.size.height);
-      if (_containOffset(
+      if (containOffset(
           cursorGlobalPosition, startOffsetHSVBoard, endOffsetHSVBoard)) {
         _isInsideHSVBoard = true;
         setState(() {});
@@ -148,7 +134,7 @@ class _BodyPickerState extends State<BodyPicker> {
           _renderBoxSlider!.localToGlobal(const Offset(0, 0));
       final endOffsetSlider = startOffsetSlider.translate(
           _renderBoxSlider!.size.width, _renderBoxSlider!.size.height);
-      if (_containOffset(
+      if (containOffset(
           cursorGlobalPosition, startOffsetSlider, endOffsetSlider)) {
         _isInsideSlider = true;
         setState(() {});
@@ -207,155 +193,53 @@ class _BodyPickerState extends State<BodyPicker> {
         },
         child: Container(
           width: _size.width * 0.9,
-          margin: const EdgeInsets.only(bottom: 30),
+          margin: const EdgeInsets.only(bottom: 20),
           child: Column(children: [
-            SizedBox(
-              key: _keyHSVBoard,
-              height: _size.height * 0.3,
-              width: _size.width * 0.9,
-              child: Stack(
-                children: [
-                  // S from left to right
-                  _buildSaturationBox(),
-                  // value from bottom to top
-                  _buildValueBox(),
-                  Positioned(
-                      left: _offsetDotHSV.dx,
-                      top: _offsetDotHSV.dy,
-                      child: _buildDot(transparent,
-                          borderWidth: 1, borderColor: _renderBorderColor())),
-                ],
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.center,
+            Stack(
               children: [
-                Container(
-                  height: sizeOfPreviewColor,
-                  width: sizeOfPreviewColor,
-                  decoration: BoxDecoration(
-                      color: HSVColor.fromAHSV(
-                              _hsvAlpha, _hsvHue, _hsvSaturation, _hsvValue)
-                          .toColor(),
-                      border: Border.all(color: colorBlack, width: 0.2),
-                      borderRadius:
-                          BorderRadius.circular(sizeOfPreviewColor / 2)),
-                ),
-                Column(
-                  children: [
-                    Stack(
-                      alignment: Alignment.center,
+                Padding(
+                  padding: EdgeInsets.all(_dotSize / 2),
+                  child: SizedBox(
+                    key: _keyHSVBoard,
+                    height: _size.height * 0.3,
+                    width: _size.width * 0.9,
+                    child: Stack(
                       children: [
-                        Container(
-                          width: _size.width * 0.6,
-                          height: 20,
-                          padding: const EdgeInsets.all(5),
-                          child: Container(
-                            key: _keySlider,
-                            width: _size.width * 0.4,
-                            height: 10,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                gradient: LinearGradient(
-                                    colors: COLOR_SLIDERS,
-                                    begin: Alignment.centerLeft,
-                                    end: Alignment.centerRight)),
-                          ),
-                        ),
-                        Positioned(
-                          left: _offsetTrackerCursor.dx,
-                          child: _buildDot(colorWhite),
-                        )
+                        // S from left to right
+                        _buildSaturationBox(),
+                        // value from bottom to top
+                        _buildValueBox(),
                       ],
                     ),
-                  ],
-                )
+                  ),
+                ),
+                Positioned(
+                    left: _offsetDotHSV.dx,
+                    top: _offsetDotHSV.dy,
+                    child: _buildDot(
+                        HSVColor.fromAHSV(
+                                _hsvAlpha, _hsvHue, _hsvSaturation, _hsvValue)
+                            .toColor(),
+                        borderWidth: 3,
+                        borderColor: _renderBorderColor())),
               ],
             ),
-            Center(
-              child: WDivider(
-                color: colorGrey,
-                height: 0.5,
-                width: _size.width * 0.4,
-                margin: const EdgeInsets.symmetric(vertical: 10),
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            // _buildSuggestColor(),
-            const SizedBox(
-              height: 10,
-            ),
-            // _buildPreviewResult(),
+            SliderColor(
+                key: _keySlider,
+                dotSize: _dotSize,
+                listGradientColor: COLOR_SLIDERS,
+                offsetTracker: _offsetTrackerCursor,
+                sliderWidth: _size.width * 0.8),
           ]),
         ),
       ),
     );
   }
 
-  Widget _buildSuggestColor() {
-    return SizedBox(
-      width: _size.width * 0.8,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-            children: ALL_COLORS
-                .map(
-                  (e) => GestureDetector(
-                    onTap: () {
-                      _changePositionWithHSVColor(HSVColor.fromColor(e));
-                    },
-                    child: Container(
-                      height: _dotSize,
-                      width: _dotSize,
-                      margin: const EdgeInsets.symmetric(horizontal: 5),
-                      decoration: BoxDecoration(
-                          color: e,
-                          borderRadius: BorderRadius.circular(_dotSize / 2)),
-                    ),
-                  ),
-                )
-                .toList()),
-      ),
-    );
-  }
-
-  Widget _buildPreviewResult() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        WTextContent(value: "HSV Propeties: "),
-        SizedBox(
-          height: 40,
-          width: 150,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(
-                width: 5,
-              ),
-              _buildPreviewResultItem("H", "${(_hsvHue).toStringAsFixed(0)}°"),
-              _buildPreviewResultItem(
-                  "S", "${(_hsvSaturation * 100).toStringAsFixed(0)}%"),
-              _buildPreviewResultItem(
-                  "V", "${(_hsvValue * 100).toStringAsFixed(0)}%"),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildSaturationBox() {
     return Container(
       foregroundDecoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
         gradient: LinearGradient(colors: [
           colorWhite,
           HSVColor.fromAHSV(1, _hsvHue, 1, 1).toColor(),
@@ -366,8 +250,9 @@ class _BodyPickerState extends State<BodyPicker> {
 
   Widget _buildValueBox() {
     return Container(
-      foregroundDecoration: const BoxDecoration(
-        gradient: LinearGradient(colors: [
+      foregroundDecoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        gradient: const LinearGradient(colors: [
           transparent,
           colorBlack,
         ], begin: Alignment.topCenter, end: Alignment.bottomCenter),
@@ -377,7 +262,7 @@ class _BodyPickerState extends State<BodyPicker> {
 
 // general
   Widget _buildDot(Color backgroundColor,
-      {Color? borderColor = colorBlack, double? borderWidth = 0.3}) {
+      {Color? borderColor = colorBlack, double? borderWidth = 2}) {
     return Container(
       height: _dotSize,
       width: _dotSize,
@@ -387,23 +272,14 @@ class _BodyPickerState extends State<BodyPicker> {
             color: borderColor!,
             width: borderWidth!,
           ),
+          boxShadow: const [
+            BoxShadow(
+                color: Color.fromRGBO(0, 0, 0, 0.2),
+                offset: Offset(0, 6),
+                blurRadius: 15,
+                spreadRadius: 0)
+          ],
           color: backgroundColor),
-    );
-  }
-
-  Widget _buildPreviewResultItem(String title, String value) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        WTextContent(value: title),
-        const SizedBox(
-          height: 7,
-        ),
-        WTextContent(
-          value: value,
-          textAlign: TextAlign.center,
-        ),
-      ],
     );
   }
 }
