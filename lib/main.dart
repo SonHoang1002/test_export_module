@@ -1,9 +1,6 @@
 import 'package:color_picker_android/commons/colors.dart';
 import 'package:color_picker_android/commons/constant.dart';
 import 'package:color_picker_android/screens/color_picker_1.dart';
-import 'package:color_picker_android/tests/custom_keyboard.dart';
-import 'package:color_picker_android/tests/custom_keyboard_1.dart';
-import 'package:color_picker_android/widgets/w_custom_keyboard.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -36,34 +33,71 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  late Color _currentColor;
+  bool _isExpanded = false;
+  double? _colorPickerHeight;
+  final GlobalKey _keyColorPicker = GlobalKey(debugLabel: "_keyColorPicker");
+  @override
+  void initState() {
+    super.initState();
+    _currentColor = const Color(0xFF5E2FEB);
+  }
+
   @override
   Widget build(BuildContext context) {
+    print(
+        "_isExpanded ${_isExpanded}, ${_colorPickerHeight ?? 0 + HEIGHT_OF_KEYBOARD}");
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text(widget.title),
-        ),
-        body: ColorPicker(
-          currentColor: colorWhite,
-          onDone: (color) {
-            // set color
-          },
-          listColorSaved: ALL_COLORS,
-          onColorSave: (Color color) {},
-        ));
-    // CustomKeyboardWidget(
-    //   onEnter: (value) {},
-    //   onBackSpace: () {},
-    //   onDone: () {},
-    // )
-    // KeyboardDemo()
-    // ColorPicker(
-    //   currentColor: colorWhite,
-    //   onDone: (color) {
-    //     // set color
-    //   },
-    //   listColorSaved: ALL_COLORS,
-    //   onColorSave: (Color color) {},
-    // )
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text(widget.title),
+      ),
+      body: Container(color: _currentColor),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showModalBottomSheet(
+              context: context,
+              builder: (ctx) {
+                return StatefulBuilder(builder: (context, setStatefull) {
+                  return SizedBox(
+                    height: _colorPickerHeight ?? 500,
+                    child: ColorPicker(
+                      key: _keyColorPicker,
+                      topicColor: const Color.fromRGBO(0, 0, 0, 0.05),
+                      currentColor: _currentColor,
+                      onDone: (color) {
+                        setState(() {
+                          _currentColor = color;
+                        });
+                      },
+                      isExpandHeight: _isExpanded,
+                      onExpandeHeight: (value) {
+                        setStatefull(() {
+                          if (value) {
+                            final currentContext =
+                                _keyColorPicker.currentContext;
+                            if (currentContext != null) {
+                              final renderBox = currentContext
+                                  .findRenderObject() as RenderBox;
+                              _colorPickerHeight =
+                                  renderBox.size.height + HEIGHT_OF_KEYBOARD;
+                            }
+                          } else {
+                            _colorPickerHeight = null;
+                          }
+                          _isExpanded = value;
+                        });
+                        setState(() {});
+                      },
+                      listColorSaved: ALL_COLORS,
+                      onColorSave: (Color color) {},
+                    ),
+                  );
+                });
+              },
+              isScrollControlled: true);
+        },
+      ),
+    );
   }
 }

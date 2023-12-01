@@ -3,8 +3,7 @@ import 'dart:math';
 import 'package:color_picker_android/commons/colors.dart';
 import 'package:color_picker_android/commons/constant.dart';
 import 'package:color_picker_android/helpers/contain_offset.dart';
-import 'package:color_picker_android/widgets/w_slider_color.dart';
-import 'package:color_picker_android/widgets/w_text_content.dart';
+import 'package:color_picker_android/widgets/w_slider_color.dart'; 
 import 'package:flutter/material.dart';
 
 class BodyPicker extends StatefulWidget {
@@ -20,7 +19,7 @@ class BodyPicker extends StatefulWidget {
 class _BodyPickerState extends State<BodyPicker> {
   final double sizeOfPreviewColor = 40;
   late Size _size;
-  double _dotSize = 30;
+  double _dotSize = 28;
   Offset _offsetTrackerCursor = const Offset(0, 0);
   Offset _offsetDotHSV = const Offset(0, 0);
 
@@ -192,7 +191,7 @@ class _BodyPickerState extends State<BodyPicker> {
           _checkInside(details.globalPosition);
         },
         child: Container(
-          width: _size.width * 0.9,
+          width: _size.width,
           margin: const EdgeInsets.only(bottom: 20),
           child: Column(children: [
             Stack(
@@ -202,7 +201,7 @@ class _BodyPickerState extends State<BodyPicker> {
                   child: SizedBox(
                     key: _keyHSVBoard,
                     height: _size.height * 0.3,
-                    width: _size.width * 0.9,
+                    width: 360,
                     child: Stack(
                       children: [
                         // S from left to right
@@ -224,12 +223,15 @@ class _BodyPickerState extends State<BodyPicker> {
                         borderColor: _renderBorderColor())),
               ],
             ),
+            const SizedBox(
+              height: 10,
+            ),
             SliderColor(
                 key: _keySlider,
                 dotSize: _dotSize,
                 listGradientColor: COLOR_SLIDERS,
                 offsetTracker: _offsetTrackerCursor,
-                sliderWidth: _size.width * 0.8),
+                sliderWidth: 360),
           ]),
         ),
       ),

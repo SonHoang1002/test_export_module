@@ -159,13 +159,13 @@ class _BodyPaletteState extends State<BodyPalette> {
     if (index == 0) {
       return const BorderRadius.only(topLeft: Radius.circular(10));
     }
-    if (index == 11) {
+    if (index == _columnOfColorBoard - 1) {
       return const BorderRadius.only(topRight: Radius.circular(10));
     }
-    if (index == 108) {
+    if (index == _columnOfColorBoard * (_rowOfColorBoard - 1)) {
       return const BorderRadius.only(bottomLeft: Radius.circular(10));
     }
-    if (index == 119) {
+    if (index == _columnOfColorBoard * _rowOfColorBoard - 1) {
       return const BorderRadius.only(bottomRight: Radius.circular(10));
     }
     return null;

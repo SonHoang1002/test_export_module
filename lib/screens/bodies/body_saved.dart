@@ -19,6 +19,7 @@ class BodySaved extends StatefulWidget {
 class _BodySavedState extends State<BodySaved> {
   late Size _size;
   late Color _selectedColor;
+  double _sizeOfColorItem = 36;
   @override
   void initState() {
     super.initState();
@@ -28,52 +29,57 @@ class _BodySavedState extends State<BodySaved> {
   @override
   Widget build(BuildContext context) {
     _size = MediaQuery.sizeOf(context);
-    return _buildSuggestColor();
+    return Expanded(child: _buildSuggestColor());
   }
 
   Widget _buildSuggestColor() {
     return Container(
       margin: const EdgeInsets.only(top: 20),
-      child: Wrap(
-          children: widget.listColorSaved
-              .map(
-                (e) => GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _selectedColor = e;
-                    });
-                    widget.onColorChange(_selectedColor);
-                  },
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Container(
-                        height: 40,
-                        width: 40,
-                        margin: const EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                                width: 3,
-                                color: _selectedColor == e
-                                    ? colorGrey
-                                    : transparent)),
-                      ),
-                      Container(
-                        height: 30,
-                        width: 30,
-                        margin: const EdgeInsets.all(5),
-                        padding: const EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          color: e,
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                      ),
-                    ],
+      width: 380,
+      child: GridView.builder(
+        itemCount: widget.listColorSaved.length,
+        gridDelegate:
+            const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 7),
+        itemBuilder: (context, index) {
+          final data = widget.listColorSaved[index];
+          return GestureDetector(
+            onTap: () {
+              setState(() {
+                _selectedColor = data;
+              });
+              widget.onColorChange(_selectedColor);
+            },
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  height: _sizeOfColorItem + 10,
+                  width: _sizeOfColorItem + 10,
+                  margin: const EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                      borderRadius:
+                          BorderRadius.circular((_sizeOfColorItem + 10) / 2),
+                      border: Border.all(
+                          width: 3,
+                          color: _selectedColor == data
+                              ? const Color.fromRGBO(0, 0, 0, 0.1)
+                              : transparent)),
+                ),
+                Container(
+                  height: _sizeOfColorItem,
+                  width: _sizeOfColorItem,
+                  margin: const EdgeInsets.all(5),
+                  padding: const EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                    color: data,
+                    borderRadius: BorderRadius.circular(_sizeOfColorItem / 2),
                   ),
                 ),
-              )
-              .toList()),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

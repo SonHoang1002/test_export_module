@@ -18,7 +18,7 @@ class BodyHSB extends StatefulWidget {
 }
 
 class _BodyPickerState extends State<BodyHSB> {
-  double _dotSize = 30;
+  double _dotSize = 28;
   late Size _size;
   // keys
   final GlobalKey _keyHue = GlobalKey(debugLabel: "_keyHue");
@@ -198,7 +198,7 @@ class _BodyPickerState extends State<BodyHSB> {
               dotSize: _dotSize,
               listGradientColor: COLOR_SLIDERS,
               offsetTracker: _offsetTrackerHue,
-              sliderWidth: _size.width * 0.8),
+              sliderWidth: 360),
           // saturation widget
           _buildTitle(
               "Saturation", "${(_hsbSaturation * 100).toStringAsFixed(0)}%"),
@@ -210,7 +210,7 @@ class _BodyPickerState extends State<BodyHSB> {
                 HSVColor.fromAHSV(1, _hsbHue, 1, 1).toColor()
               ],
               offsetTracker: _offsetTrackerSaturation,
-              sliderWidth: _size.width * 0.8),
+              sliderWidth: 360),
           // brightness widget
           _buildTitle(
               "Brightness", "${(_hsbBrightness * 100).toStringAsFixed(0)}%"),
@@ -222,7 +222,7 @@ class _BodyPickerState extends State<BodyHSB> {
                 HSVColor.fromAHSV(1, _hsbHue, 1, 1).toColor()
               ],
               offsetTracker: _offsetTrackerBrightness,
-              sliderWidth: _size.width * 0.8),
+              sliderWidth: 360),
           _buildPreviewColor()
         ],
       ),
@@ -245,7 +245,7 @@ class _BodyPickerState extends State<BodyHSB> {
   Widget _buildTitle(String title, String value) {
     return Container(
       margin: const EdgeInsets.only(top: 20, bottom: 10),
-      width: _size.width * 0.8,
+      width: 360,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
