@@ -284,6 +284,7 @@ class _ColorPickerState extends State<ColorPicker> {
                         _isSaved
                             ? "${PATH_PREFFIX_ICON}icon_save_active.png"
                             : "${PATH_PREFFIX_ICON}icon_save_inactive.png",
+                            package: "color_picker_android",
                       ),
                     ),
                   ),
