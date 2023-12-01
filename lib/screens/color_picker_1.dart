@@ -10,6 +10,7 @@ import 'package:color_picker_android/widgets/w_keyboard.dart';
 import 'package:color_picker_android/widgets/w_text_content.dart';
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ColorPicker extends StatefulWidget {
   final Color currentColor;
@@ -274,19 +275,24 @@ class _ColorPickerState extends State<ColorPicker> {
                           : null;
                     },
                     child: Container(
-                      width: 30,
-                      height: 30,
-                      padding: const EdgeInsets.all(7),
-                      decoration: BoxDecoration(
-                          color: widget.topicColor,
-                          borderRadius: BorderRadius.circular(6.5)),
-                      child: Image.asset(
-                        _isSaved
-                            ? "${PATH_PREFFIX_ICON}icon_save_active.png"
-                            : "${PATH_PREFFIX_ICON}icon_save_inactive.png",
-                            package: "color_picker_android",
-                      ),
-                    ),
+                        width: 30,
+                        height: 30,
+                        padding: const EdgeInsets.all(7),
+                        decoration: BoxDecoration(
+                            color: widget.topicColor,
+                            borderRadius: BorderRadius.circular(6.5)),
+                        child: Icon(
+                          _isSaved
+                              ? FontAwesomeIcons.solidBookmark
+                              : FontAwesomeIcons.bookmark,
+                          size: 15,
+                        )
+                        // Image.asset(
+                        //   _isSaved
+                        //       ? "${PATH_PREFFIX_ICON}icon_save_active.png"
+                        //       : "${PATH_PREFFIX_ICON}icon_save_inactive.png",
+                        // ),
+                        ),
                   ),
                 ],
               ),
@@ -296,16 +302,20 @@ class _ColorPickerState extends State<ColorPicker> {
                   widget.onDone(_selectedColor);
                 },
                 child: Container(
-                  width: 30,
-                  height: 30,
-                  padding: const EdgeInsets.all(7),
-                  decoration: BoxDecoration(
-                      color: widget.topicColor,
-                      borderRadius: BorderRadius.circular(20)),
-                  child: Image.asset(
-                    "${PATH_PREFFIX_ICON}icon_done.png",
-                  ),
-                ),
+                    width: 30,
+                    height: 30,
+                    padding: const EdgeInsets.all(7),
+                    decoration: BoxDecoration(
+                        color: widget.topicColor,
+                        borderRadius: BorderRadius.circular(20)),
+                    child: const Icon(
+                            FontAwesomeIcons.check,
+                          size: 15,
+                        )
+                    //  Image.asset(
+                    //   "${PATH_PREFFIX_ICON}icon_done.png",
+                    // ),
+                    ),
               ),
             ],
           ),

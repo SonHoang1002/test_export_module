@@ -1,6 +1,8 @@
+import 'package:color_picker_android/commons/colors.dart';
 import 'package:color_picker_android/commons/constant.dart';
 import 'package:color_picker_android/widgets/w_text_content.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 // ignore: must_be_immutable
 class CustomKeyboardWidget extends StatelessWidget {
   final Function(String value) onEnter;
@@ -131,12 +133,15 @@ class CustomKeyboardWidget extends StatelessWidget {
           onTap: () {
             onBackSpace();
           },
-          child: Center(
-              child: Image.asset(
-            "${PATH_PREFFIX_ICON}icon_delete.png",
-            height: 20,
-            width: 20,
-          )),
+          child: const Center(
+              child: 
+              Icon(FontAwesomeIcons.deleteLeft,size: 20,color: colorBlack,)
+          //     Image.asset(
+          //   "${PATH_PREFFIX_ICON}icon_delete.png",
+          //   height: 20,
+          //   width: 20,
+          // )
+          ),
         ),
       ),
     );
