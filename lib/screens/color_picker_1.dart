@@ -303,21 +303,20 @@ class _ColorPickerState extends State<ColorPicker> {
                   widget.onDone(_selectedColor);
                 },
                 child: Container(
-                  width: 30,
-                  height: 30,
-                  padding: const EdgeInsets.all(7),
-                  decoration: BoxDecoration(
-                      color: widget.topicColor,
-                      borderRadius: BorderRadius.circular(20)),
-                  child:
-                      // const Icon(
-                      //         FontAwesomeIcons.check,
-                      //       size: 15,
-                      //     )
-                      Image.asset(
-                    "${PATH_PREFFIX_ICON}icon_done.png",
-                  ),
-                ),
+                    width: 30,
+                    height: 30,
+                    padding: const EdgeInsets.all(7),
+                    decoration: BoxDecoration(
+                        color: widget.topicColor,
+                        borderRadius: BorderRadius.circular(20)),
+                    child: const Icon(
+                      FontAwesomeIcons.check,
+                      size: 15,
+                    )
+                    //  Image.asset(
+                    //   "${PATH_PREFFIX_ICON}icon_done.png",
+                    // ),
+                    ),
               ),
             ],
           ),
