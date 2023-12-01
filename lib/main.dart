@@ -73,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     onColorSave: (Color color) {},
                   );
                 });
-              },
+              }, 
               isScrollControlled: true);
         },
       ),

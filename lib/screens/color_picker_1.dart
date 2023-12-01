@@ -1,6 +1,7 @@
 import 'package:color_picker_android/commons/colors.dart';
 import 'package:color_picker_android/helpers/check_utf16.dart';
 import 'package:color_picker_android/helpers/convert.dart';
+import 'package:color_picker_android/helpers/navigator_route.dart';
 import 'package:color_picker_android/screens/bodies/body_hsb.dart';
 import 'package:color_picker_android/screens/bodies/body_palette.dart';
 import 'package:color_picker_android/screens/bodies/body_picker.dart';
@@ -26,14 +27,22 @@ class ColorPicker extends StatefulWidget {
   /// change theme of input, button, segment controls,
   final Color? topicColor;
 
-  const ColorPicker({
-    super.key,
-    required this.currentColor,
-    required this.onDone,
-    required this.listColorSaved,
-    this.onColorSave,
-    this.topicColor = colorGrey,
-  });
+  final Color? colorIconSave;
+
+  final Color? colorIconCheck;
+
+  final Color? barrierColor;
+
+  const ColorPicker(
+      {super.key,
+      required this.currentColor,
+      required this.onDone,
+      required this.listColorSaved,
+      this.onColorSave,
+      this.topicColor = colorGrey,
+      this.colorIconSave,
+      this.colorIconCheck,
+      this.barrierColor});
   @override
   State<ColorPicker> createState() => _ColorPickerState();
 }
@@ -73,6 +82,7 @@ class _ColorPickerState extends State<ColorPicker> {
     _isSaved = widget.listColorSaved.contains(_selectedColor);
     return Container(
       alignment: Alignment.center,
+      color: widget.barrierColor,
       child: Stack(
         alignment: Alignment.center,
         children: [
@@ -306,6 +316,7 @@ class _ColorPickerState extends State<ColorPicker> {
                               ? FontAwesomeIcons.solidBookmark
                               : FontAwesomeIcons.bookmark,
                           size: 15,
+                          color: widget.colorIconSave ?? colorBlack,
                         )
                         // Image.asset(
                         //   _isSaved
@@ -328,9 +339,10 @@ class _ColorPickerState extends State<ColorPicker> {
                     decoration: BoxDecoration(
                         color: widget.topicColor,
                         borderRadius: BorderRadius.circular(20)),
-                    child: const Icon(
+                    child: Icon(
                       FontAwesomeIcons.check,
                       size: 15,
+                      color: widget.colorIconSave ?? colorBlack,
                     )
                     //  Image.asset(
                     //   "${PATH_PREFFIX_ICON}icon_done.png",
