@@ -48,7 +48,7 @@ class CustomKeyboardWidget1 extends StatelessWidget {
                     child: Text(
                       val,
                       style:
-                          TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                          const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                     ),
                   );
                 },
@@ -112,7 +112,7 @@ class ColorPickerKeyboard extends StatelessWidget
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(_kKeyboardHeight);
+  Size get preferredSize => const Size.fromHeight(_kKeyboardHeight);
 }
 
 /// A quick example "keyboard" widget for counter value.
@@ -124,7 +124,7 @@ class CounterKeyboard extends StatelessWidget
   CounterKeyboard({Key? key,required this.notifier}) : super(key: key);
 
   @override
-  Size get preferredSize => Size.fromHeight(200);
+  Size get preferredSize => const Size.fromHeight(200);
 
   @override
   Widget build(BuildContext context) {
@@ -139,7 +139,7 @@ class CounterKeyboard extends StatelessWidget
                 value--;
                 updateValue(value.toString());
               },
-              child: FittedBox(
+              child: const FittedBox(
                 child: Text(
                   "-",
                   style: TextStyle(
@@ -156,7 +156,7 @@ class CounterKeyboard extends StatelessWidget
                 value++;
                 updateValue(value.toString());
               },
-              child: FittedBox(
+              child: const FittedBox(
                 child: Text(
                   "+",
                   style: TextStyle(
@@ -193,7 +193,7 @@ class CounterKeyboard extends StatelessWidget
           (node) {
             return GestureDetector(
               onTap: () => node.unfocus(),
-              child: Padding(
+              child: const Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Icon(Icons.close),
               ),
@@ -207,10 +207,10 @@ class CounterKeyboard extends StatelessWidget
                 context: context,
                 builder: (context) {
                   return AlertDialog(
-                    content: Text("Custom Action"),
+                    content: const Text("Custom Action"),
                     actions: <Widget>[
                       ElevatedButton(
-                        child: Text("OK"),
+                        child: const Text("OK"),
                         onPressed: () => Navigator.of(context).pop(),
                       )
                     ],
@@ -231,8 +231,8 @@ class CounterKeyboard extends StatelessWidget
                 onTap: () => node.unfocus(),
                 child: Container(
                   color: Colors.white,
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
+                  padding: const EdgeInsets.all(8.0),
+                  child: const Text(
                     "CLOSE",
                     style: TextStyle(color: Colors.black),
                   ),
@@ -245,8 +245,8 @@ class CounterKeyboard extends StatelessWidget
                 onTap: () => node.unfocus(),
                 child: Container(
                   color: Colors.black,
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
+                  padding: const EdgeInsets.all(8.0),
+                  child: const Text(
                     "DONE",
                     style: TextStyle(color: Colors.white),
                   ),
@@ -257,7 +257,7 @@ class CounterKeyboard extends StatelessWidget
         ),
         KeyboardActionsItem(
           focusNode: _nodeText6,
-          footerBuilder: (_) => PreferredSize(
+          footerBuilder: (_) => const PreferredSize(
               child: SizedBox(
                   height: 40,
                   child: Center(
@@ -282,42 +282,42 @@ class CounterKeyboard extends StatelessWidget
               TextField(
                 keyboardType: TextInputType.number,
                 focusNode: _nodeText1,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: "Input Number",
                 ),
               ),
               TextField(
                 keyboardType: TextInputType.text,
                 focusNode: _nodeText2,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: "Input Text with Custom Done Button",
                 ),
               ),
               TextField(
                 keyboardType: TextInputType.number,
                 focusNode: _nodeText3,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: "Input Number with Custom Action",
                 ),
               ),
               TextField(
                 keyboardType: TextInputType.text,
                 focusNode: _nodeText4,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: "Input Text without Done button",
                 ),
               ),
               TextField(
                 keyboardType: TextInputType.number,
                 focusNode: _nodeText5,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: "Input Number with Toolbar Buttons",
                 ),
               ),
               TextField(
                 keyboardType: TextInputType.number,
                 focusNode: _nodeText6,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: "Input Number with Custom Footer",
                 ),
               ),

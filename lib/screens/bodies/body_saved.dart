@@ -19,7 +19,10 @@ class BodySaved extends StatefulWidget {
 class _BodySavedState extends State<BodySaved> {
   late Size _size;
   late Color _selectedColor;
-  double _sizeOfColorItem = 36;
+  double _sizeOfColorItem = 30;
+  late double _widthColorBody;
+  final double paddingEachColorItem = 20;
+  final numberItemOnRow = 6;
   @override
   void initState() {
     super.initState();
@@ -29,19 +32,24 @@ class _BodySavedState extends State<BodySaved> {
   @override
   Widget build(BuildContext context) {
     _size = MediaQuery.sizeOf(context);
+    _selectedColor = widget.currentColor;
+    _widthColorBody = _size.width * 0.85;
+    _sizeOfColorItem = _widthColorBody / numberItemOnRow - paddingEachColorItem;
     return Expanded(child: _buildSuggestColor());
   }
 
   Widget _buildSuggestColor() {
     return Container(
       margin: const EdgeInsets.only(top: 20),
-      width: 380,
+      width: _widthColorBody + 20,
       child: GridView.builder(
+        // physics:,
         itemCount: widget.listColorSaved.length,
-        gridDelegate:
-            const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 7),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: numberItemOnRow),
         itemBuilder: (context, index) {
           final data = widget.listColorSaved[index];
+
           return GestureDetector(
             onTap: () {
               setState(() {
@@ -53,14 +61,14 @@ class _BodySavedState extends State<BodySaved> {
               alignment: Alignment.center,
               children: [
                 Container(
-                  height: _sizeOfColorItem + 10,
-                  width: _sizeOfColorItem + 10,
-                  margin: const EdgeInsets.all(5),
+                  height: _sizeOfColorItem + paddingEachColorItem,
+                  width: _sizeOfColorItem + paddingEachColorItem,
+                  margin: const EdgeInsets.all(7),
                   decoration: BoxDecoration(
-                      borderRadius:
-                          BorderRadius.circular((_sizeOfColorItem + 10) / 2),
+                      borderRadius: BorderRadius.circular(
+                          (_sizeOfColorItem + paddingEachColorItem) / 2),
                       border: Border.all(
-                          width: 3,
+                          width: 2,
                           color: _selectedColor == data
                               ? const Color.fromRGBO(0, 0, 0, 0.1)
                               : transparent)),
@@ -68,13 +76,21 @@ class _BodySavedState extends State<BodySaved> {
                 Container(
                   height: _sizeOfColorItem,
                   width: _sizeOfColorItem,
-                  margin: const EdgeInsets.all(5),
-                  padding: const EdgeInsets.all(5),
                   decoration: BoxDecoration(
-                    color: data,
+                    color: Color.fromRGBO(data.red, data.green, data.blue, 0.9),
+                    border: Border.all(color: data, width: 2),
                     borderRadius: BorderRadius.circular(_sizeOfColorItem / 2),
                   ),
                 ),
+                // Container(
+                //   height: _sizeOfColorItem - 4,
+                //   width: _sizeOfColorItem - 4,
+                //   decoration: BoxDecoration(
+                //     color: Color.fromRGBO(data.red, data.green, data.blue, 0.3),
+                //     borderRadius:
+                //         BorderRadius.circular((_sizeOfColorItem - 4) / 2),
+                //   ),
+                // ),
               ],
             ),
           );

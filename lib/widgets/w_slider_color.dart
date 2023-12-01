@@ -16,14 +16,12 @@ class SliderColor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      // key: key,
       height: dotSize,
       width: sliderWidth,
       child: Stack(
         children: [
           Container(
-            decoration: BoxDecoration(
-                border: Border.all(width: 0.3, color: colorBlack),
+            decoration: BoxDecoration( 
                 gradient: LinearGradient(
                     colors: listGradientColor,
                     begin: Alignment.centerLeft,

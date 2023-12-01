@@ -42,6 +42,8 @@ class _BodyPickerState extends State<BodyHSB> {
   bool? _isInsideHue;
   bool? _isInsideSaturation;
   bool? _isInsideBrightness;
+  //
+  late double _widthColorBody;
 
   @override
   void initState() {
@@ -57,25 +59,24 @@ class _BodyPickerState extends State<BodyHSB> {
       _renderBoxBrightness =
           _keyBrightness.currentContext?.findRenderObject() as RenderBox;
       _changePositionWithHSVColor(initHsbColor);
+      setState(() {});
     });
   }
 
   void _changePositionWithHSVColor(HSVColor hsvColor) {
     _offsetTrackerHue = Offset(
-      hsvColor.hue / 360 * (_renderBoxHue.size.width-_dotSize),
+      hsvColor.hue / 360 * (_renderBoxHue.size.width - _dotSize),
       0,
     );
 
     _offsetTrackerSaturation = Offset(
-      hsvColor.saturation * (_renderBoxSaturation.size.width-_dotSize),
+      hsvColor.saturation * (_renderBoxSaturation.size.width - _dotSize),
       0,
     );
     _offsetTrackerBrightness = Offset(
-      hsvColor.value * (_renderBoxBrightness.size.width-_dotSize),
+      hsvColor.value * (_renderBoxBrightness.size.width - _dotSize),
       0,
     );
-
-    setState(() {});
   }
 
   void _disableInside() {
@@ -172,6 +173,14 @@ class _BodyPickerState extends State<BodyHSB> {
   @override
   Widget build(BuildContext context) {
     _size = MediaQuery.sizeOf(context);
+    _widthColorBody = _size.width * 0.85;
+    final initHsbColor = HSVColor.fromColor(widget.currentColor);
+    _hsbHue = initHsbColor.hue;
+    _hsbBrightness = initHsbColor.value;
+    _hsbSaturation = initHsbColor.saturation;
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _changePositionWithHSVColor(initHsbColor);
+    });
     return GestureDetector(
       onPanStart: (details) {
         _checkInside(details.globalPosition);
@@ -198,7 +207,7 @@ class _BodyPickerState extends State<BodyHSB> {
               dotSize: _dotSize,
               listGradientColor: COLOR_SLIDERS,
               offsetTracker: _offsetTrackerHue,
-              sliderWidth: 360),
+              sliderWidth: _widthColorBody),
           // saturation widget
           _buildTitle(
               "Saturation", "${(_hsbSaturation * 100).toStringAsFixed(0)}%"),
@@ -206,11 +215,11 @@ class _BodyPickerState extends State<BodyHSB> {
               key: _keySaturation,
               dotSize: _dotSize,
               listGradientColor: [
-                transparent,
+                const Color.fromRGBO(216, 216, 216, 1),
                 HSVColor.fromAHSV(1, _hsbHue, 1, 1).toColor()
               ],
               offsetTracker: _offsetTrackerSaturation,
-              sliderWidth: 360),
+              sliderWidth: _widthColorBody),
           // brightness widget
           _buildTitle(
               "Brightness", "${(_hsbBrightness * 100).toStringAsFixed(0)}%"),
@@ -222,7 +231,7 @@ class _BodyPickerState extends State<BodyHSB> {
                 HSVColor.fromAHSV(1, _hsbHue, 1, 1).toColor()
               ],
               offsetTracker: _offsetTrackerBrightness,
-              sliderWidth: 360),
+              sliderWidth: _widthColorBody),
           _buildPreviewColor()
         ],
       ),
@@ -245,7 +254,7 @@ class _BodyPickerState extends State<BodyHSB> {
   Widget _buildTitle(String title, String value) {
     return Container(
       margin: const EdgeInsets.only(top: 20, bottom: 10),
-      width: 360,
+      width: _widthColorBody,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

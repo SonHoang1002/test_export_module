@@ -1,5 +1,6 @@
 import 'package:color_picker_android/commons/colors.dart';
 import 'package:color_picker_android/commons/constant.dart';
+import 'package:color_picker_android/helpers/navigator_route.dart';
 import 'package:color_picker_android/screens/color_picker_1.dart';
 import 'package:flutter/material.dart';
 
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -45,8 +47,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    print(
-        "_isExpanded ${_isExpanded}, ${_colorPickerHeight ?? 0 + HEIGHT_OF_KEYBOARD}");
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -59,39 +59,18 @@ class _MyHomePageState extends State<MyHomePage> {
               context: context,
               builder: (ctx) {
                 return StatefulBuilder(builder: (context, setStatefull) {
-                  return SizedBox(
-                    height: _colorPickerHeight ?? 500,
-                    child: ColorPicker(
-                      key: _keyColorPicker,
-                      topicColor: const Color.fromRGBO(0, 0, 0, 0.05),
-                      currentColor: _currentColor,
-                      onDone: (color) {
-                        setState(() {
-                          _currentColor = color;
-                        });
-                      },
-                      isExpandHeight: _isExpanded,
-                      onExpandeHeight: (value) {
-                        setStatefull(() {
-                          if (value) {
-                            final currentContext =
-                                _keyColorPicker.currentContext;
-                            if (currentContext != null) {
-                              final renderBox = currentContext
-                                  .findRenderObject() as RenderBox;
-                              _colorPickerHeight =
-                                  renderBox.size.height + HEIGHT_OF_KEYBOARD;
-                            }
-                          } else {
-                            _colorPickerHeight = null;
-                          }
-                          _isExpanded = value;
-                        });
-                        setState(() {});
-                      },
-                      listColorSaved: ALL_COLORS,
-                      onColorSave: (Color color) {},
-                    ),
+                  return ColorPicker(
+                    key: _keyColorPicker,
+                    topicColor: const Color.fromRGBO(0, 0, 0, 0.05),
+                    currentColor: _currentColor,
+                    onDone: (color) {
+                      setState(() {
+                        _currentColor = color;
+                      });
+                      popNavigator(context);
+                    },
+                    listColorSaved: ALL_COLORS,
+                    onColorSave: (Color color) {},
                   );
                 });
               },

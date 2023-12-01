@@ -3,6 +3,7 @@ import 'package:color_picker_android/commons/constant.dart';
 import 'package:color_picker_android/widgets/w_text_content.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 // ignore: must_be_immutable
 class CustomKeyboardWidget extends StatelessWidget {
   final Function(String value) onEnter;
@@ -21,9 +22,21 @@ class CustomKeyboardWidget extends StatelessWidget {
     sizeOfKeyboard = _size.width;
     return Container(
       height: 300,
-      width: sizeOfKeyboard,
-      color: const Color.fromRGBO(249, 249, 249, 1),
-      padding: const EdgeInsets.all(5),
+      width: sizeOfKeyboard, 
+      decoration: const BoxDecoration(
+          color: Color.fromRGBO(249, 249, 249, 1),
+          boxShadow: [
+            BoxShadow(
+                offset: Offset(1, 2),
+                blurRadius: 2,
+                spreadRadius: 1,
+                color: colorGrey)
+          ]),
+      padding: EdgeInsets.only(
+          top: 5,
+          left: 5,
+          right: 5,
+          bottom: MediaQuery.of(context).padding.bottom+5),
       child: Flex(
         direction: Axis.vertical,
         children: [
@@ -134,14 +147,17 @@ class CustomKeyboardWidget extends StatelessWidget {
             onBackSpace();
           },
           child: const Center(
-              child: 
-              Icon(FontAwesomeIcons.deleteLeft,size: 20,color: colorBlack,)
-          //     Image.asset(
-          //   "${PATH_PREFFIX_ICON}icon_delete.png",
-          //   height: 20,
-          //   width: 20,
-          // )
-          ),
+              child: Icon(
+            FontAwesomeIcons.deleteLeft,
+            size: 20,
+            color: Color.fromRGBO(0, 0, 0, 0.7),
+          )
+              //     Image.asset(
+              //   "${PATH_PREFFIX_ICON}icon_delete.png",
+              //   height: 20,
+              //   width: 20,
+              // )
+              ),
         ),
       ),
     );

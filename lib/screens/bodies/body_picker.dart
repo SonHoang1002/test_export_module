@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:color_picker_android/commons/colors.dart';
 import 'package:color_picker_android/commons/constant.dart';
 import 'package:color_picker_android/helpers/contain_offset.dart';
-import 'package:color_picker_android/widgets/w_slider_color.dart'; 
+import 'package:color_picker_android/widgets/w_slider_color.dart';
 import 'package:flutter/material.dart';
 
 class BodyPicker extends StatefulWidget {
@@ -38,6 +38,8 @@ class _BodyPickerState extends State<BodyPicker> {
   double _hsvValue = 1.0;
   // dùng để thay đổi màu tuong phản của border bảng chọn màu HSV
   List<double> _limitHueForBorderColors = [210, 275];
+  //
+  late double _widthColorBody;
   @override
   void initState() {
     super.initState();
@@ -171,6 +173,7 @@ class _BodyPickerState extends State<BodyPicker> {
   @override
   Widget build(BuildContext context) {
     _size = MediaQuery.sizeOf(context);
+    _widthColorBody = _size.width * 0.85;
     return Container(
       margin: const EdgeInsets.only(top: 20),
       child: GestureDetector(
@@ -201,7 +204,7 @@ class _BodyPickerState extends State<BodyPicker> {
                   child: SizedBox(
                     key: _keyHSVBoard,
                     height: _size.height * 0.3,
-                    width: 360,
+                    width: _widthColorBody,
                     child: Stack(
                       children: [
                         // S from left to right
@@ -231,7 +234,7 @@ class _BodyPickerState extends State<BodyPicker> {
                 dotSize: _dotSize,
                 listGradientColor: COLOR_SLIDERS,
                 offsetTracker: _offsetTrackerCursor,
-                sliderWidth: 360),
+                sliderWidth: _widthColorBody),
           ]),
         ),
       ),
@@ -242,6 +245,7 @@ class _BodyPickerState extends State<BodyPicker> {
     return Container(
       foregroundDecoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: colorGrey.withOpacity(0.3), width: 0.2),
         gradient: LinearGradient(colors: [
           colorWhite,
           HSVColor.fromAHSV(1, _hsvHue, 1, 1).toColor(),
@@ -253,6 +257,7 @@ class _BodyPickerState extends State<BodyPicker> {
   Widget _buildValueBox() {
     return Container(
       foregroundDecoration: BoxDecoration(
+        border: Border.all(color: colorGrey.withOpacity(0.3), width: 0.2),
         borderRadius: BorderRadius.circular(10),
         gradient: const LinearGradient(colors: [
           transparent,
