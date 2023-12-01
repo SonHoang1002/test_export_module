@@ -41,6 +41,7 @@ class _BodySavedState extends State<BodySaved> {
   Widget _buildSuggestColor() {
     return Container(
       margin: const EdgeInsets.only(top: 20),
+      padding: const EdgeInsets.only(bottom: 20),
       width: _widthColorBody + 20,
       child: GridView.builder(
         // physics:,

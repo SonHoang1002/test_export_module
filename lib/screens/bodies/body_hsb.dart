@@ -77,6 +77,7 @@ class _BodyPickerState extends State<BodyHSB> {
       hsvColor.value * (_renderBoxBrightness.size.width - _dotSize),
       0,
     );
+    setState(() {});
   }
 
   void _disableInside() {

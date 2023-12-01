@@ -53,6 +53,7 @@ class _BodyPickerState extends State<BodyPicker> {
       _renderBoxSlider =
           _keySlider.currentContext?.findRenderObject() as RenderBox;
       _changePositionWithHSVColor(hsvColor);
+      setState(() {});
     });
   }
 
@@ -75,10 +76,6 @@ class _BodyPickerState extends State<BodyPicker> {
         _renderBoxSlider!.size.height,
       );
     }
-    _hsvHue = hsvColor.hue;
-    _hsvSaturation = hsvColor.saturation;
-    _hsvValue = hsvColor.value;
-    _onColorChanged();
     setState(() {});
   }
 
@@ -174,6 +171,13 @@ class _BodyPickerState extends State<BodyPicker> {
   Widget build(BuildContext context) {
     _size = MediaQuery.sizeOf(context);
     _widthColorBody = _size.width * 0.85;
+    final hsvColor = HSVColor.fromColor(widget.currentColor);
+    _hsvHue = hsvColor.hue;
+    _hsvSaturation = hsvColor.saturation;
+    _hsvValue = hsvColor.value;
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _changePositionWithHSVColor(hsvColor);
+    });
     return Container(
       margin: const EdgeInsets.only(top: 20),
       child: GestureDetector(

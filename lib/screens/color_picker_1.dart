@@ -80,6 +80,7 @@ class _ColorPickerState extends State<ColorPicker> {
     _size = MediaQuery.of(context).size;
     _widthColorBody = _size.width * 0.85;
     _isSaved = widget.listColorSaved.contains(_selectedColor);
+    print(_showKeyBoard);
     return Container(
       alignment: Alignment.center,
       color: widget.barrierColor,
@@ -102,9 +103,9 @@ class _ColorPickerState extends State<ColorPicker> {
               ],
             ),
           ),
-          _showKeyBoard == true ? _buildKeyBoard() : const SizedBox(),
+          if (_showKeyBoard == true) buildKeyboard()
           // widget is used to override
-          _showKeyBoard == true ? _buildDisableWidget() : const SizedBox()
+          // _showKeyBoard == true ? _buildDisableWidget() : const SizedBox()
         ],
       ),
     );
@@ -114,6 +115,43 @@ class _ColorPickerState extends State<ColorPicker> {
     _showKeyBoard = null;
     FocusManager.instance.primaryFocus?.unfocus();
     setState(() {});
+  }
+
+  Widget buildKeyboard() {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        GestureDetector(
+          onTap: () {
+            _showKeyBoard = false;
+            print("red red");
+            setState(() {});
+          },
+          child: Container(
+            color: transparent,
+          ),
+        ),
+        Positioned(
+          top: _offsetDisable!.dy,
+          left: _offsetDisable!.dx,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            child: IgnorePointer(
+
+              child: Container(
+                width: 80,
+                height: 30,
+                color: Colors.amber.withOpacity(0.0),
+              ),
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: _buildKeyBoard(),
+        ),
+      ],
+    );
   }
 
   Widget _buildDisableWidget() {
@@ -137,57 +175,42 @@ class _ColorPickerState extends State<ColorPicker> {
   }
 
   Widget _buildKeyBoard() {
-    return GestureDetector(
-      onTap: () {
-        _disableKeyBoard();
-      },
-      child: Container(
-        color: transparent,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const SizedBox(),
-            GestureDetector(
-              onTap: () {
-                print(
-                    "add gesture detector to override GestureDetector parent");
-              },
-              child: CustomKeyboardWidget(
-                onEnter: (value) {
-                  if (_hexController.text.trim().length > 6) {
-                    _selectedColor =
-                        convertHexStringToColor(_hexController.text.trim());
-                    _disableKeyBoard();
-                    return;
-                  }
-                  _insertText(value);
-                  setState(() {});
-                },
-                onBackSpace: () {
-                  if (_hexController.selection.baseOffset == 1) {
-                    return;
-                  }
-                  _backspace();
-                  setState(() {});
-                },
-                onDone: () {
-                  final lengthOfHexController =
-                      _hexController.text.trim().length;
-                  if (lengthOfHexController < 7) {
-                    for (int i = 0; i < 7 - lengthOfHexController; i++) {
-                      _insertText("0");
-                    }
-                  }
-                  String content = _hexController.text.trim();
-                  final hex6String = content.substring(1, content.length);
-                  _selectedColor = convertHexStringToColor(hex6String);
-                  _disableKeyBoard();
-                },
-              ),
-            ),
-          ],
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        CustomKeyboardWidget(
+          onEnter: (value) {
+            if (_hexController.text.trim().length > 6) {
+              _selectedColor =
+                  convertHexStringToColor(_hexController.text.trim());
+              _disableKeyBoard();
+              return;
+            }
+            _insertText(value);
+            setState(() {});
+          },
+          onBackSpace: () {
+            if (_hexController.selection.baseOffset == 1) {
+              return;
+            }
+            _backspace();
+            setState(() {});
+          },
+          onDone: () {
+            final lengthOfHexController = _hexController.text.trim().length;
+            if (lengthOfHexController < 7) {
+              for (int i = 0; i < 7 - lengthOfHexController; i++) {
+                _insertText("0");
+              }
+            }
+            String content = _hexController.text.trim();
+            final hex6String = content.substring(1, content.length);
+            _selectedColor = convertHexStringToColor(hex6String);
+            _disableKeyBoard();
+          },
         ),
-      ),
+      ],
     );
   }
 
