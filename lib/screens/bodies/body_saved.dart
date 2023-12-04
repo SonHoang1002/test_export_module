@@ -43,14 +43,12 @@ class _BodySavedState extends State<BodySaved> {
       margin: const EdgeInsets.only(top: 20),
       padding: const EdgeInsets.only(bottom: 20),
       width: _widthColorBody + 20,
-      child: GridView.builder(
-        // physics:,
+      child: GridView.builder( 
         itemCount: widget.listColorSaved.length,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: numberItemOnRow),
         itemBuilder: (context, index) {
           final data = widget.listColorSaved[index];
-
           return GestureDetector(
             onTap: () {
               setState(() {

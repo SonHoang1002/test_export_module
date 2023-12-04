@@ -3,6 +3,7 @@ import 'package:color_picker_android/commons/constant.dart';
 import 'package:color_picker_android/helpers/navigator_route.dart';
 import 'package:color_picker_android/screens/color_picker_1.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const MyApp());
@@ -54,7 +55,14 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Container(color: _currentColor),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
+        onPressed: () async {
+          // Obtain shared preferences.
+          final SharedPreferences prefs = await SharedPreferences.getInstance();
+          List<String>? listColorsString =
+              prefs.getStringList("colors_saved")??[];
+              // convert List<String> to List<Color>
+          List<Color> listSavedColor = listColorsString.map((e) => Color(int.parse(e))).toList();
+          // ignore: use_build_context_synchronously
           showModalBottomSheet(
               context: context,
               builder: (ctx) {
@@ -70,10 +78,13 @@ class _MyHomePageState extends State<MyHomePage> {
                       popNavigator(context);
                     },
                     listColorSaved: ALL_COLORS,
-                    onColorSave: (Color color) {},
+                    onColorSave: (Color color){
+                      
+                    },
                   );
                 });
-              }, 
+              },
+              backgroundColor: transparent,
               isScrollControlled: true);
         },
       ),
