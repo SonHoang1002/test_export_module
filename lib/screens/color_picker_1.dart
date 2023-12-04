@@ -1,4 +1,5 @@
 import 'package:color_picker_android/commons/colors.dart';
+import 'package:color_picker_android/helpers/check_hex.dart';
 import 'package:color_picker_android/helpers/check_utf16.dart';
 import 'package:color_picker_android/helpers/convert.dart';
 import 'package:color_picker_android/screens/bodies/body_hsb.dart';
@@ -58,7 +59,10 @@ class _ColorPickerState extends State<ColorPicker> {
   // disable widget
   final GlobalKey _keyTextField = GlobalKey(debugLabel: "_keyTextField");
   Offset? _offsetDisable;
-    List<Color> _listColorSaved = [];
+  //
+  List<Color> _listColorSaved = [];
+  int _maxLengthInput = 7;
+  bool _isValid = true;
 
   void _onColorChange(Color color) {
     _unFocusKeyBoard();
@@ -73,7 +77,7 @@ class _ColorPickerState extends State<ColorPicker> {
     super.initState();
     _listColorSaved = List.from(widget.listColorSaved);
     _selectedColor = widget.currentColor;
-    _hexController.text = convertColorToHexString(_selectedColor);
+    _hexController.text = convertColorToHexString(_selectedColor); 
   }
 
   @override
@@ -81,6 +85,7 @@ class _ColorPickerState extends State<ColorPicker> {
     _size = MediaQuery.of(context).size;
     _widthColorBody = _size.width * 0.85;
     _isSaved = _listColorSaved.contains(_selectedColor);
+    _isValid = checkHexString(_hexController.text.trim()); 
     return Container(
       alignment: Alignment.center,
       color: widget.barrierColor,
@@ -110,9 +115,12 @@ class _ColorPickerState extends State<ColorPicker> {
           if (_showKeyBoard == true)
             GestureDetector(
               onTap: () {
-                setState(() {
-                  _showKeyBoard = null;
-                });
+                _updateCurrentColor();
+                _disableKeyBoard();
+              },
+              onPanStart: (details) {
+                _updateCurrentColor();
+                _disableKeyBoard();
               },
             ),
           Container(
@@ -128,51 +136,22 @@ class _ColorPickerState extends State<ColorPicker> {
 
   void _disableKeyBoard() {
     _showKeyBoard = null;
-    FocusManager.instance.primaryFocus?.unfocus();
+    _unFocusKeyBoard();
     setState(() {});
   }
 
-  Widget _buildKeyBoard() {
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          CustomKeyboardWidget(
-            onEnter: (value) {
-              if (_hexController.text.trim().length > 6) {
-                _selectedColor =
-                    convertHexStringToColor(_hexController.text.trim());
-                _disableKeyBoard();
-                return;
-              }
-              _insertText(value);
-              setState(() {});
-            },
-            onBackSpace: () {
-              if (_hexController.selection.baseOffset == 1) {
-                return;
-              }
-              _backspace();
-              setState(() {});
-            },
-            onDone: () {
-              final lengthOfHexController = _hexController.text.trim().length;
-              if (lengthOfHexController < 7) {
-                for (int i = 0; i < 7 - lengthOfHexController; i++) {
-                  _insertText("0");
-                }
-              }
-              String content = _hexController.text.trim();
-              final hex6String = content.substring(1, content.length);
-              _selectedColor = convertHexStringToColor(hex6String);
-              _disableKeyBoard();
-            },
-          ),
-        ],
-      ),
-    );
+  void _updateCurrentColor() {
+    final lengthOfHexController = _hexController.text.trim().length;
+    if (lengthOfHexController < 7) {
+      for (int i = 0; i < 7 - lengthOfHexController; i++) {
+        _insertText("0");
+      }
+    }
+    String content = _hexController.text.trim();
+    final hex6String = content.substring(1, content.length);
+    if (_isValid) {
+      _selectedColor = convertHexStringToColor(hex6String);
+    }
   }
 
   void _unFocusKeyBoard() {
@@ -182,17 +161,36 @@ class _ColorPickerState extends State<ColorPicker> {
   void _insertText(String myText) {
     final text = _hexController.text;
     final textSelection = _hexController.selection;
-    final newText = text.replaceRange(
+    String newText = '';
+    // 576ABC890
+    newText = text.replaceRange(
       textSelection.start,
       textSelection.end,
       myText,
     );
     final myTextLength = myText.length;
-    _hexController.text = newText;
-    _hexController.selection = textSelection.copyWith(
-      baseOffset: textSelection.start + myTextLength,
-      extentOffset: textSelection.start + myTextLength,
-    );
+    if (textSelection.start == 0 && textSelection.end != 0) {
+      _hexController.text = "#$newText";
+      _hexController.selection = textSelection.copyWith(
+        baseOffset: 2,
+        extentOffset: 2,
+      );
+      return;
+    }
+
+    if (textSelection.start == 1 && textSelection.end == _maxLengthInput) {
+      _hexController.text = newText;
+      _hexController.selection = textSelection.copyWith(
+        baseOffset: 2,
+        extentOffset: 2,
+      );
+    } else {
+      _hexController.text = newText;
+      _hexController.selection = textSelection.copyWith(
+        baseOffset: textSelection.start + myTextLength,
+        extentOffset: textSelection.start + myTextLength,
+      );
+    }
   }
 
   void _backspace() {
@@ -201,20 +199,29 @@ class _ColorPickerState extends State<ColorPicker> {
     final selectionLength = textSelection.end - textSelection.start;
     // There is a selection.
     if (selectionLength > 0) {
-      final newText = text.replaceRange(
+      String newText = text.replaceRange(
         textSelection.start,
         textSelection.end,
         '',
       );
-      _hexController.text = newText;
-      _hexController.selection = textSelection.copyWith(
-        baseOffset: textSelection.start,
-        extentOffset: textSelection.start,
-      );
+      if (textSelection.start == 0) {
+        newText = "#$newText";
+        _hexController.text = newText;
+        _hexController.selection = textSelection.copyWith(
+          baseOffset: 1,
+          extentOffset: 1,
+        );
+      } else {
+        _hexController.text = newText;
+        _hexController.selection = textSelection.copyWith(
+          baseOffset: textSelection.start,
+          extentOffset: textSelection.start,
+        );
+      }
       return;
     }
     // The cursor is at the beginning.
-    if (textSelection.start <= 0) {
+    if (textSelection.start <= 1) {
       return;
     }
     // Delete the previous character
@@ -231,6 +238,44 @@ class _ColorPickerState extends State<ColorPicker> {
     _hexController.selection = textSelection.copyWith(
       baseOffset: newStart,
       extentOffset: newStart,
+    );
+  }
+
+  Widget _buildKeyBoard() {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          // 576ABC890
+          CustomKeyboardWidget(
+            onEnter: (value) {
+              _insertText(value);
+              if (_hexController.text.trim().length > _maxLengthInput - 1) {
+                final newText =
+                    _hexController.text.trim().substring(0, _maxLengthInput);
+                if (_isValid) {
+                  _selectedColor = convertHexStringToColor(newText);
+                }
+                _hexController.text = newText;
+                _disableKeyBoard();
+                return;
+              }
+
+              setState(() {});
+            },
+            onBackSpace: () {
+              _backspace();
+              setState(() {});
+            },
+            onDone: () {
+              _updateCurrentColor();
+              _disableKeyBoard();
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -267,6 +312,8 @@ class _ColorPickerState extends State<ColorPicker> {
                   width: 80,
                   decoration: BoxDecoration(
                       color: widget.topicColor,
+                      border:
+                          Border.all(color: _isValid ? transparent : colorRed),
                       borderRadius: BorderRadius.circular(6.5)),
                   child: TextField(
                     onTap: () {
@@ -278,8 +325,19 @@ class _ColorPickerState extends State<ColorPicker> {
                             .localToGlobal(const Offset(0, 0));
                       });
                     },
-                    onChanged: (value) {},
-                    maxLength: 7,
+                    onChanged: (value) {
+                      // check case copy and paste
+                      // kiem tra xem do dai nhu the nao
+                      String newValue = value;
+                      List<String> listSplitValue = value.split('');
+                      if (listSplitValue[0] != "#") {
+                        newValue = "#${newValue.substring(0, newValue.length)}";
+                      } 
+                      _hexController.text = newValue;
+                      _isValid = checkHexString(newValue);
+                      setState(() {});
+                    },
+                    maxLength: _maxLengthInput,
                     keyboardType: TextInputType.none,
                     controller: _hexController,
                     textAlign: TextAlign.center,
@@ -297,15 +355,17 @@ class _ColorPickerState extends State<ColorPicker> {
               // save button
               GestureDetector(
                 onTap: () {
-                  _showKeyBoard = null;
-                  _unFocusKeyBoard(); 
                   if (_listColorSaved.contains(_selectedColor)) {
                     _listColorSaved = _listColorSaved
                         .where((element) => element != _selectedColor)
                         .toList();
                   } else {
-                    _listColorSaved = [_selectedColor,...List.from(_listColorSaved)];
+                    _listColorSaved = [
+                      _selectedColor,
+                      ...List.from(_listColorSaved)
+                    ];
                   }
+                  _disableKeyBoard();
                   setState(() {});
                   widget.onColorSave != null
                       ? widget.onColorSave!(_selectedColor)
@@ -330,10 +390,7 @@ class _ColorPickerState extends State<ColorPicker> {
           ),
           GestureDetector(
             onTap: () {
-              setState(() {
-                _showKeyBoard = null;
-                _unFocusKeyBoard();
-              });
+              _disableKeyBoard();
               widget.onDone(_selectedColor);
             },
             child: Container(

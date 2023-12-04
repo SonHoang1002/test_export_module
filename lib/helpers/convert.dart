@@ -10,8 +10,7 @@ String convertColorToHexString(Color color) {
 /// String [value] is format: #7A32BC || 7A32BC
 Color convertHexStringToColor(String value) {
   String newValue = value;
-  if (value.contains("#")) {
-    // delete "#"
+  if (value.contains("#")) { 
     newValue = value.substring(1, value.length);
   }
   return Color(int.parse("0xFF$newValue"));
