@@ -1,6 +1,6 @@
 # color_picker_android
 
-A new Flutter project.
+Color Picker Android have been written in Flutter, use in Android app
 
 ## Getting Started
 
