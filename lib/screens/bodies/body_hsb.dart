@@ -30,9 +30,9 @@ class _BodyPickerState extends State<BodyHSB> {
   Offset _offsetTrackerSaturation = const Offset(0, 0);
   Offset _offsetTrackerBrightness = const Offset(0, 0);
 
-  late RenderBox _renderBoxHue;
-  late RenderBox _renderBoxSaturation;
-  late RenderBox _renderBoxBrightness;
+  RenderBox? _renderBoxHue;
+  RenderBox? _renderBoxSaturation;
+  RenderBox? _renderBoxBrightness;
   // store data
   double _hsbHue = 0;
   double _hsbSaturation = 0;
@@ -44,7 +44,7 @@ class _BodyPickerState extends State<BodyHSB> {
   bool? _isInsideBrightness;
   //
   late double _widthColorBody;
-
+  bool _onPanning = false;
   @override
   void initState() {
     super.initState();
@@ -64,20 +64,25 @@ class _BodyPickerState extends State<BodyHSB> {
   }
 
   void _changePositionWithHSVColor(HSVColor hsvColor) {
-    _offsetTrackerHue = Offset(
-      hsvColor.hue / 360 * (_renderBoxHue.size.width - _dotSize),
-      0,
-    );
+    if (_renderBoxHue != null) {
+      _offsetTrackerHue = Offset(
+        hsvColor.hue / 360 * (_renderBoxHue!.size.width - _dotSize),
+        0,
+      );
+    }
 
-    _offsetTrackerSaturation = Offset(
-      hsvColor.saturation * (_renderBoxSaturation.size.width - _dotSize),
-      0,
-    );
-    _offsetTrackerBrightness = Offset(
-      hsvColor.value * (_renderBoxBrightness.size.width - _dotSize),
-      0,
-    );
-    setState(() {});
+    if (_renderBoxSaturation != null) {
+      _offsetTrackerSaturation = Offset(
+        hsvColor.saturation * (_renderBoxSaturation!.size.width - _dotSize),
+        0,
+      );
+    }
+    if (_renderBoxBrightness != null) {
+      _offsetTrackerBrightness = Offset(
+        hsvColor.value * (_renderBoxBrightness!.size.width - _dotSize),
+        0,
+      );
+    }
   }
 
   void _disableInside() {
@@ -85,50 +90,57 @@ class _BodyPickerState extends State<BodyHSB> {
       _isInsideBrightness = null;
       _isInsideHue = null;
       _isInsideSaturation = null;
+      _onPanning = false;
     });
   }
 
   void _checkInside(Offset cursorGlobalPosition) {
-    final gStartOffsetHue = _renderBoxHue.localToGlobal(const Offset(0, 0));
-    final gEndOffsetHue = gStartOffsetHue.translate(
-        _renderBoxHue.size.width, _renderBoxHue.size.height);
-    if (containOffset(cursorGlobalPosition, gStartOffsetHue, gEndOffsetHue)) {
-      setState(() {
-        _isInsideHue = true;
-      });
+    if (_renderBoxHue != null) {
+      final gStartOffsetHue = _renderBoxHue!.localToGlobal(const Offset(0, 0));
+      final gEndOffsetHue = gStartOffsetHue.translate(
+          _renderBoxHue!.size.width, _renderBoxHue!.size.height);
+      if (containOffset(cursorGlobalPosition, gStartOffsetHue, gEndOffsetHue)) {
+        setState(() {
+          _isInsideHue = true;
+        });
+      }
     }
     // saturation
-    final gStartOffsetSaturation =
-        _renderBoxSaturation.localToGlobal(const Offset(0, 0));
-    final gEndOffsetSaturation = gStartOffsetSaturation.translate(
-        _renderBoxSaturation.size.width, _renderBoxSaturation.size.height);
-    if (containOffset(
-        cursorGlobalPosition, gStartOffsetSaturation, gEndOffsetSaturation)) {
-      setState(() {
-        _isInsideSaturation = true;
-      });
+    if (_renderBoxSaturation != null) {
+      final gStartOffsetSaturation =
+          _renderBoxSaturation!.localToGlobal(const Offset(0, 0));
+      final gEndOffsetSaturation = gStartOffsetSaturation.translate(
+          _renderBoxSaturation!.size.width, _renderBoxSaturation!.size.height);
+      if (containOffset(
+          cursorGlobalPosition, gStartOffsetSaturation, gEndOffsetSaturation)) {
+        setState(() {
+          _isInsideSaturation = true;
+        });
+      }
     }
     // brightness
-    final gStartOffsetBrightness =
-        _renderBoxBrightness.localToGlobal(const Offset(0, 0));
-    final gEndOffsetBrightness = gStartOffsetBrightness.translate(
-        _renderBoxBrightness.size.width, _renderBoxBrightness.size.height);
-    if (containOffset(
-        cursorGlobalPosition, gStartOffsetBrightness, gEndOffsetBrightness)) {
-      setState(() {
-        _isInsideBrightness = true;
-      });
+    if (_renderBoxBrightness != null) {
+      final gStartOffsetBrightness =
+          _renderBoxBrightness!.localToGlobal(const Offset(0, 0));
+      final gEndOffsetBrightness = gStartOffsetBrightness.translate(
+          _renderBoxBrightness!.size.width, _renderBoxBrightness!.size.height);
+      if (containOffset(
+          cursorGlobalPosition, gStartOffsetBrightness, gEndOffsetBrightness)) {
+        setState(() {
+          _isInsideBrightness = true;
+        });
+      }
     }
   }
 
   void _updatePositionAndHSBProperties(Offset cursorGlobalPosition) {
-    if (_isInsideHue == true) {
+    if (_renderBoxHue != null && _isInsideHue == true) {
       Size size = Size(
-        _renderBoxHue.size.width,
-        _renderBoxHue.size.height,
+        _renderBoxHue!.size.width,
+        _renderBoxHue!.size.height,
       );
       Offset cursorLocalPosition =
-          _renderBoxHue.globalToLocal(cursorGlobalPosition);
+          _renderBoxHue!.globalToLocal(cursorGlobalPosition);
       Offset newOffsetHue = Offset(
         max(0, min(cursorLocalPosition.dx, size.width - _dotSize)),
         max(0, min(cursorLocalPosition.dy, size.height)),
@@ -138,13 +150,13 @@ class _BodyPickerState extends State<BodyHSB> {
       _offsetTrackerHue = newOffsetHue;
       setState(() {});
     }
-    if (_isInsideSaturation == true) {
+    if (_renderBoxSaturation != null && _isInsideSaturation == true) {
       Size size = Size(
-        _renderBoxSaturation.size.width,
-        _renderBoxSaturation.size.height,
+        _renderBoxSaturation!.size.width,
+        _renderBoxSaturation!.size.height,
       );
       final newOffset =
-          _renderBoxSaturation.globalToLocal(cursorGlobalPosition);
+          _renderBoxSaturation!.globalToLocal(cursorGlobalPosition);
       _offsetTrackerSaturation = Offset(
         max(0, min(newOffset.dx, size.width - _dotSize)),
         max(0, min(newOffset.dy, size.height)),
@@ -152,13 +164,13 @@ class _BodyPickerState extends State<BodyHSB> {
       _hsbSaturation = (_offsetTrackerSaturation.dx) / (size.width - _dotSize);
       setState(() {});
     }
-    if (_isInsideBrightness == true) {
+    if (_renderBoxBrightness != null && _isInsideBrightness == true) {
       Size size = Size(
-        _renderBoxBrightness.size.width,
-        _renderBoxBrightness.size.height,
+        _renderBoxBrightness!.size.width,
+        _renderBoxBrightness!.size.height,
       );
       final newOffset =
-          _renderBoxBrightness.globalToLocal(cursorGlobalPosition);
+          _renderBoxBrightness!.globalToLocal(cursorGlobalPosition);
       _offsetTrackerBrightness = Offset(
         max(0, min(newOffset.dx, size.width - _dotSize)),
         max(0, min(newOffset.dy, size.height)),
@@ -174,19 +186,21 @@ class _BodyPickerState extends State<BodyHSB> {
   @override
   Widget build(BuildContext context) {
     _size = MediaQuery.sizeOf(context);
-    _widthColorBody = _size.width * 0.85;
-    final initHsbColor = HSVColor.fromColor(widget.currentColor);
-    _hsbHue = initHsbColor.hue;
-    _hsbBrightness = initHsbColor.value;
-    _hsbSaturation = initHsbColor.saturation;
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    _widthColorBody = _size.width * 0.85; 
+    if (!_onPanning) {
+      final initHsbColor = HSVColor.fromColor(widget.currentColor);
+      _hsbHue = initHsbColor.hue;
+      _hsbBrightness = initHsbColor.value;
+      _hsbSaturation = initHsbColor.saturation;
       _changePositionWithHSVColor(initHsbColor);
-    });
+    }
     return GestureDetector(
       onPanStart: (details) {
+        _onPanning = true;
         _checkInside(details.globalPosition);
       },
       onPanUpdate: (details) {
+        _onPanning = true;
         _updatePositionAndHSBProperties(details.globalPosition);
       },
       onPanEnd: (details) {
@@ -196,6 +210,7 @@ class _BodyPickerState extends State<BodyHSB> {
         _disableInside();
       },
       onTapDown: (details) {
+        _onPanning = true;
         _checkInside(details.globalPosition);
         _updatePositionAndHSBProperties(details.globalPosition);
       },

@@ -1,5 +1,4 @@
 import 'package:color_picker_android/commons/colors.dart';
-import 'package:color_picker_android/commons/constant.dart';
 import 'package:flutter/material.dart';
 
 class BodySaved extends StatefulWidget {

@@ -40,6 +40,8 @@ class _BodyPickerState extends State<BodyPicker> {
   List<double> _limitHueForBorderColors = [210, 275];
   //
   late double _widthColorBody;
+
+  bool _onPanning = false;
   @override
   void initState() {
     super.initState();
@@ -76,7 +78,6 @@ class _BodyPickerState extends State<BodyPicker> {
         _renderBoxSlider!.size.height,
       );
     }
-    setState(() {});
   }
 
   void _updatePositionAndHSVProperty(Offset cursorGlobalPosition) {
@@ -144,6 +145,7 @@ class _BodyPickerState extends State<BodyPicker> {
     setState(() {
       _isInsideHSVBoard = null;
       _isInsideSlider = null;
+      _onPanning = false;
     });
   }
 
@@ -170,22 +172,24 @@ class _BodyPickerState extends State<BodyPicker> {
   @override
   Widget build(BuildContext context) {
     _size = MediaQuery.sizeOf(context);
-    _widthColorBody = _size.width * 0.85;
-    final hsvColor = HSVColor.fromColor(widget.currentColor);
-    _hsvHue = hsvColor.hue;
-    _hsvSaturation = hsvColor.saturation;
-    _hsvValue = hsvColor.value;
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    _widthColorBody = _size.width * 0.85; 
+    if (!_onPanning) {
+      final hsvColor = HSVColor.fromColor(widget.currentColor);
+      _hsvHue = hsvColor.hue;
+      _hsvSaturation = hsvColor.saturation;
+      _hsvValue = hsvColor.value;
       _changePositionWithHSVColor(hsvColor);
-    });
+    }
     return Container(
       margin: const EdgeInsets.only(top: 20),
       child: GestureDetector(
         onTapDown: (details) {
+          _onPanning = true;
           _checkInside(details.globalPosition);
           _updatePositionAndHSVProperty(details.globalPosition);
         },
         onPanUpdate: (details) {
+          _onPanning = true;
           _updatePositionAndHSVProperty(details.globalPosition);
         },
         onPanEnd: (details) {
@@ -195,6 +199,7 @@ class _BodyPickerState extends State<BodyPicker> {
           _disableInside();
         },
         onPanStart: (details) {
+          _onPanning = true;
           _checkInside(details.globalPosition);
         },
         child: Container(

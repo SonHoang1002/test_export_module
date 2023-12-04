@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:color_picker_android/commons/colors.dart';
 import 'package:color_picker_android/commons/constant.dart';
 import 'package:color_picker_android/helpers/navigator_route.dart';
@@ -58,10 +60,12 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: () async {
           // Obtain shared preferences.
           final SharedPreferences prefs = await SharedPreferences.getInstance();
-          List<String>? listColorsString =
-              prefs.getStringList("colors_saved")??[];
-              // convert List<String> to List<Color>
-          List<Color> listSavedColor = listColorsString.map((e) => Color(int.parse(e))).toList();
+          List<String> listColorString =
+              prefs.getStringList(PREFERENCE_SAVED_COLOR_KEY) ?? [];  
+          List<Color> listSavedColor = listColorString
+              .map((e) =>
+                  Color(int.parse(e.split('(0x')[1].split(')')[0], radix: 16)))
+              .toList();
           // ignore: use_build_context_synchronously
           showModalBottomSheet(
               context: context,
@@ -77,9 +81,18 @@ class _MyHomePageState extends State<MyHomePage> {
                       });
                       popNavigator(context);
                     },
-                    listColorSaved: ALL_COLORS,
-                    onColorSave: (Color color){
-                      
+                    listColorSaved: listSavedColor,
+                    onColorSave: (Color color) async {
+                      // kiem tra xem co mau do trong list chua
+                      if (listSavedColor.contains(color)) {
+                        listSavedColor = List.from(listSavedColor
+                            .where((element) => element != color)
+                            .toList());
+                      } else {
+                        listSavedColor = [color, ...List.from(listSavedColor)];
+                      }
+                      await prefs.setStringList(PREFERENCE_SAVED_COLOR_KEY,
+                          listSavedColor.map((e) => e.toString()).toList());
                     },
                   );
                 });
