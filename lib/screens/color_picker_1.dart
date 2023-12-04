@@ -77,7 +77,7 @@ class _ColorPickerState extends State<ColorPicker> {
     super.initState();
     _listColorSaved = List.from(widget.listColorSaved);
     _selectedColor = widget.currentColor;
-    _hexController.text = convertColorToHexString(_selectedColor); 
+    _hexController.text = convertColorToHexString(_selectedColor);
   }
 
   @override
@@ -85,7 +85,7 @@ class _ColorPickerState extends State<ColorPicker> {
     _size = MediaQuery.of(context).size;
     _widthColorBody = _size.width * 0.85;
     _isSaved = _listColorSaved.contains(_selectedColor);
-    _isValid = checkHexString(_hexController.text.trim()); 
+    _isValid = checkHexString(_hexController.text.trim());
     return Container(
       alignment: Alignment.center,
       color: widget.barrierColor,
@@ -162,7 +162,6 @@ class _ColorPickerState extends State<ColorPicker> {
     final text = _hexController.text;
     final textSelection = _hexController.selection;
     String newText = '';
-    // 576ABC890
     newText = text.replaceRange(
       textSelection.start,
       textSelection.end,
@@ -255,14 +254,13 @@ class _ColorPickerState extends State<ColorPicker> {
               if (_hexController.text.trim().length > _maxLengthInput - 1) {
                 final newText =
                     _hexController.text.trim().substring(0, _maxLengthInput);
-                if (_isValid) {
+                if (checkHexString(newText)) {
                   _selectedColor = convertHexStringToColor(newText);
                 }
                 _hexController.text = newText;
                 _disableKeyBoard();
                 return;
               }
-
               setState(() {});
             },
             onBackSpace: () {
@@ -332,9 +330,12 @@ class _ColorPickerState extends State<ColorPicker> {
                       List<String> listSplitValue = value.split('');
                       if (listSplitValue[0] != "#") {
                         newValue = "#${newValue.substring(0, newValue.length)}";
-                      } 
+                      }
                       _hexController.text = newValue;
                       _isValid = checkHexString(newValue);
+                      if (_isValid) {
+                        _updateCurrentColor();
+                      }
                       setState(() {});
                     },
                     maxLength: _maxLengthInput,
