@@ -24,6 +24,7 @@ class CustomKeyboardWidget extends StatelessWidget {
     sizeOfKeyboard = _size.width;
     return Container(
       height: 300,
+      
       width: sizeOfKeyboard,
       decoration: BoxDecoration(
           color: isLightMode

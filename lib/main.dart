@@ -72,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
               builder: (ctx) {
                 return StatefulBuilder(builder: (context, setStatefull) {
                   return ColorPicker(
-                    isLightMode: false,
+                    isLightMode: true,
                     key: _keyColorPicker,
                     currentColor: _currentColor,
                     onDone: (color) {
