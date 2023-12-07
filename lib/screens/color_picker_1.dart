@@ -93,7 +93,7 @@ class _ColorPickerState extends State<ColorPicker> {
     return Container(
       height: double.infinity,
       width: double.infinity,
-      color: transparent, 
+      color: transparent,
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: [
@@ -106,15 +106,15 @@ class _ColorPickerState extends State<ColorPicker> {
             alignment: Alignment.bottomCenter,
             children: [
               Container(
-                height: 480 + (_showKeyBoard == true ? 120 : 0),
+                height: 520 + (_showKeyBoard == true ? 120 : 0),
                 width: _size.width * 0.97,
-                
                 decoration: BoxDecoration(
                     color: widget.isLightMode
                         ? const Color.fromRGBO(249, 249, 249, 1)
                         : const Color.fromRGBO(29, 29, 29, 1),
                     borderRadius: BorderRadius.circular(20)),
-                padding: EdgeInsets.only(top:20,bottom: MediaQuery.of(context).padding.bottom),
+                padding: EdgeInsets.only(
+                    top: 20, bottom: MediaQuery.of(context).padding.bottom),
                 margin: const EdgeInsets.only(bottom: 5),
                 child: Stack(
                   children: [
@@ -141,7 +141,7 @@ class _ColorPickerState extends State<ColorPicker> {
                   },
                 ),
               Container(
-                  height: 480 + (_showKeyBoard == true ? 120 : 0),
+                  height: 520 + (_showKeyBoard == true ? 120 : 0),
                   width: _size.width * 0.9,
                   margin: const EdgeInsets.only(bottom: 5),
                   padding: const EdgeInsets.only(top: 20),
