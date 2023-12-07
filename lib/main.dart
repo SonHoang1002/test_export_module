@@ -61,17 +61,21 @@ class _MyHomePageState extends State<MyHomePage> {
           // Obtain shared preferences.
           final SharedPreferences prefs = await SharedPreferences.getInstance();
           List<String> listColorString =
-              prefs.getStringList(PREFERENCE_SAVED_COLOR_KEY) ?? [];  
+              prefs.getStringList(PREFERENCE_SAVED_COLOR_KEY) ?? [];
           List<Color> listSavedColor = listColorString
               .map((e) =>
                   Color(int.parse(e.split('(0x')[1].split(')')[0], radix: 16)))
               .toList();
           // ignore: use_build_context_synchronously
+          Brightness _brightness =
+              View.of(context).platformDispatcher.platformBrightness;
+          bool _isLightMode = _brightness == Brightness.light;
           showModalBottomSheet(
               context: context,
               builder: (ctx) {
                 return StatefulBuilder(builder: (context, setStatefull) {
                   return ColorPicker(
+                    isLightMode: _isLightMode,
                     key: _keyColorPicker,
                     currentColor: _currentColor,
                     onDone: (color) {

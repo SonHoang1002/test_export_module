@@ -34,17 +34,20 @@ class ColorPicker extends StatefulWidget {
   final Color? colorIconCheck;
 
   final Color? barrierColor;
+  final bool isLightMode;
 
-  const ColorPicker(
-      {super.key,
-      required this.currentColor,
-      required this.onDone,
-      required this.listColorSaved,
-      this.onColorSave,
-      this.topicColor,
-      this.colorIconSave,
-      this.colorIconCheck,
-      this.barrierColor});
+  const ColorPicker({
+    super.key,
+    required this.currentColor,
+    required this.onDone,
+    required this.listColorSaved,
+    required this.isLightMode,
+    this.onColorSave,
+    this.topicColor,
+    this.colorIconSave,
+    this.colorIconCheck,
+    this.barrierColor,
+  });
   @override
   State<ColorPicker> createState() => _ColorPickerState();
 }
@@ -89,7 +92,7 @@ class _ColorPickerState extends State<ColorPicker> {
     _isValid = checkHexString(_hexController.text.trim());
     Brightness _brightness =
         View.of(context).platformDispatcher.platformBrightness;
-    _isLightMode = _brightness == Brightness.light;
+    _isLightMode = widget.isLightMode;
 
     return Container(
       height: double.infinity,
