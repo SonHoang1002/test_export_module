@@ -106,7 +106,7 @@ class _ColorPickerState extends State<ColorPicker> {
             alignment: Alignment.bottomCenter,
             children: [
               Container(
-                height: 480, //+ (_showKeyBoard == true ? 120 : 0),
+                height: 480 + (_showKeyBoard == true ? 120 : 0),
                 width: _size.width * 0.97,
                 decoration: BoxDecoration(
                     color: widget.isLightMode
@@ -140,7 +140,7 @@ class _ColorPickerState extends State<ColorPicker> {
                   },
                 ),
               Container(
-                  height: 480, //+ (_showKeyBoard == true ? 120 : 0),
+                  height: 480 + (_showKeyBoard == true ? 120 : 0),
                   width: _size.width * 0.9,
                   margin: const EdgeInsets.only(bottom: 5),
                   padding: const EdgeInsets.only(top: 20),
@@ -526,7 +526,8 @@ class _ColorPickerState extends State<ColorPicker> {
         return BodyPicker(
             currentColor: _selectedColor,
             onColorChange: _onColorChange,
-            isLightMode: widget.isLightMode,isShowKeyboard: _showKeyBoard);
+            isLightMode: widget.isLightMode,
+            isShowKeyboard: _showKeyBoard);
       case 3:
         return BodySaved(
             currentColor: _selectedColor,
