@@ -66,8 +66,7 @@ class _ColorPickerState extends State<ColorPicker> {
   //
   List<Color> _listColorSaved = [];
   int _maxLengthInput = 7;
-  bool _isValid = true;
-  // late bool widget.isLightMode;
+  bool _isValid = true; 
   void _onColorChange(Color color) {
     _unFocusKeyBoard();
     setState(() {
@@ -89,8 +88,7 @@ class _ColorPickerState extends State<ColorPicker> {
     _size = MediaQuery.of(context).size;
     _widthColorBody = _size.width * 0.85;
     _isSaved = _listColorSaved.contains(_selectedColor);
-    _isValid = checkHexString(_hexController.text.trim());
-    // widget.isLightMode = widget.isLightMode;
+    _isValid = checkHexString(_hexController.text.trim()); 
 
     return Container(
       height: double.infinity,
