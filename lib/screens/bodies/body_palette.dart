@@ -7,9 +7,13 @@ import 'package:flutter/material.dart';
 
 class BodyPalette extends StatefulWidget {
   final Color currentColor;
+  final bool isLightMode;
   final Function(Color color) onColorChange;
   const BodyPalette(
-      {super.key, required this.currentColor, required this.onColorChange});
+      {super.key,
+      required this.currentColor,
+      required this.onColorChange,
+      required this.isLightMode});
 
   @override
   State<BodyPalette> createState() => _BodyPaletteState();
@@ -37,7 +41,6 @@ class _BodyPaletteState extends State<BodyPalette> {
       setState(() {});
     });
   }
-
 
   void _disableInside() {
     setState(() {

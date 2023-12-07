@@ -9,23 +9,27 @@ class CustomKeyboardWidget extends StatelessWidget {
   final Function(String value) onEnter;
   final Function() onBackSpace;
   final Function() onDone;
-
+  final bool isLightMode;
   CustomKeyboardWidget(
       {super.key,
       required this.onEnter,
       required this.onBackSpace,
+      required this.isLightMode,
       required this.onDone});
   late double sizeOfKeyboard;
+
   @override
   Widget build(BuildContext context) {
     final _size = MediaQuery.sizeOf(context);
     sizeOfKeyboard = _size.width;
     return Container(
       height: 300,
-      width: sizeOfKeyboard, 
-      decoration: const BoxDecoration(
-          color: Color.fromRGBO(249, 249, 249, 1),
-          boxShadow: [
+      width: sizeOfKeyboard,
+      decoration: BoxDecoration(
+          color: isLightMode
+              ? const Color.fromRGBO(249, 249, 249, 1)
+              : const Color.fromRGBO(29, 29, 29, 1),
+          boxShadow: const [
             BoxShadow(
                 offset: Offset(1, 2),
                 blurRadius: 2,
@@ -36,7 +40,7 @@ class CustomKeyboardWidget extends StatelessWidget {
           top: 5,
           left: 5,
           right: 5,
-          bottom: MediaQuery.of(context).padding.bottom+5),
+          bottom: MediaQuery.of(context).padding.bottom + 5),
       child: Flex(
         direction: Axis.vertical,
         children: [
@@ -98,7 +102,7 @@ class CustomKeyboardWidget extends StatelessWidget {
         child: Container(
           margin: const EdgeInsets.all(5),
           decoration: BoxDecoration(
-              color: const Color.fromRGBO(0, 0, 0, 0.05),
+              color: isLightMode ? black005 : white005,
               borderRadius: BorderRadius.circular(10)),
           child: InkWell(
             onTap: () {
@@ -106,8 +110,7 @@ class CustomKeyboardWidget extends StatelessWidget {
             },
             child: Center(
                 child: WTextContent(
-              value: value,
-            )),
+                    value: value, textColor: isLightMode ? black1 : white1)),
           ),
         ));
   }
@@ -120,7 +123,7 @@ class CustomKeyboardWidget extends StatelessWidget {
         child: Container(
           margin: const EdgeInsets.all(5),
           decoration: BoxDecoration(
-              color: const Color.fromRGBO(0, 0, 0, 0.05),
+              color: isLightMode ? black005 : white005,
               borderRadius: BorderRadius.circular(10)),
           child: InkWell(
             onTap: () {
@@ -129,6 +132,7 @@ class CustomKeyboardWidget extends StatelessWidget {
             child: Center(
                 child: WTextContent(
               value: value,
+              textColor: isLightMode ? black1 : white1,
             )),
           ),
         ));
@@ -140,17 +144,17 @@ class CustomKeyboardWidget extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.all(5),
         decoration: BoxDecoration(
-            color: const Color.fromRGBO(0, 0, 0, 0.05),
+            color: isLightMode ? black005 : white005,
             borderRadius: BorderRadius.circular(10)),
         child: InkWell(
           onTap: () {
             onBackSpace();
           },
-          child: const Center(
+          child: Center(
               child: Icon(
             FontAwesomeIcons.deleteLeft,
             size: 20,
-            color: Color.fromRGBO(0, 0, 0, 0.7),
+            color: isLightMode ? black1 : white1,
           )
               //     Image.asset(
               //   "${PATH_PREFFIX_ICON}icon_delete.png",

@@ -41,3 +41,22 @@ const Color guideErrorDark = Color(0xFFCF6679);
 const Color blueBlues = Color(0xFF174378);
 
 
+const Color white1=  Color.fromRGBO(255, 255, 255, 1);
+const Color white07 =Color.fromRGBO(255, 255, 255, 0.7);
+const Color white05=  Color.fromRGBO(255, 255, 255, 0.5);
+const Color white03=  Color.fromRGBO(255, 255, 255, 0.3);
+const Color white005=  Color.fromRGBO(255, 255, 255, 0.05);
+
+const Color white01 = Color.fromRGBO(255, 255, 255, 0.1);
+
+const Color black1=  Color.fromRGBO(0, 0, 0,1);
+const Color black07 =   Color.fromRGBO(0, 0, 0, 0.7);
+const Color black05=  Color.fromRGBO(0, 0, 0, 0.5);
+const Color black005=  Color.fromRGBO(0, 0, 0, 0.05);
+const Color black01=  Color.fromRGBO(0, 0, 0, 0.1);
+
+// const Color black005=  Color.fromRGBO(0, 0, 0, 0.05);
+// const Color black005=  Color.fromRGBO(0, 0, 0, 0.05);
+// const Color black005=  Color.fromRGBO(0, 0, 0, 0.05);
+// const Color black005=  Color.fromRGBO(0, 0, 0, 0.05);
+// const Color black005=  Color.fromRGBO(0, 0, 0, 0.05);

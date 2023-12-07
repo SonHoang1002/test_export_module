@@ -3,13 +3,15 @@ import 'package:flutter/material.dart';
 
 class BodySaved extends StatefulWidget {
   final Color currentColor;
+  final bool isLightMode;
   final Function(Color color) onColorChange;
   final List<Color> listColorSaved;
   const BodySaved(
       {super.key,
       required this.currentColor,
       required this.onColorChange,
-      required this.listColorSaved});
+      required this.listColorSaved,
+      required this.isLightMode});
 
   @override
   State<BodySaved> createState() => _BodySavedState();
@@ -20,7 +22,7 @@ class _BodySavedState extends State<BodySaved> {
   late Color _selectedColor;
   double _sizeOfColorItem = 30;
   late double _widthColorBody;
-  final double paddingEachColorItem = 20;
+  final double paddingEachColorItem = 22;
   final numberItemOnRow = 6;
   @override
   void initState() {
@@ -42,7 +44,7 @@ class _BodySavedState extends State<BodySaved> {
       margin: const EdgeInsets.only(top: 20),
       padding: const EdgeInsets.only(bottom: 20),
       width: _widthColorBody + 20,
-      child: GridView.builder( 
+      child: GridView.builder(
         itemCount: widget.listColorSaved.length,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: numberItemOnRow),
@@ -66,9 +68,11 @@ class _BodySavedState extends State<BodySaved> {
                       borderRadius: BorderRadius.circular(
                           (_sizeOfColorItem + paddingEachColorItem) / 2),
                       border: Border.all(
-                          width: 2,
+                          width: 3,
                           color: _selectedColor == data
-                              ? const Color.fromRGBO(0, 0, 0, 0.1)
+                              ? widget.isLightMode
+                                  ? black01
+                                  : white03
                               : transparent)),
                 ),
                 Container(
@@ -80,15 +84,6 @@ class _BodySavedState extends State<BodySaved> {
                     borderRadius: BorderRadius.circular(_sizeOfColorItem / 2),
                   ),
                 ),
-                // Container(
-                //   height: _sizeOfColorItem - 4,
-                //   width: _sizeOfColorItem - 4,
-                //   decoration: BoxDecoration(
-                //     color: Color.fromRGBO(data.red, data.green, data.blue, 0.3),
-                //     borderRadius:
-                //         BorderRadius.circular((_sizeOfColorItem - 4) / 2),
-                //   ),
-                // ),
               ],
             ),
           );

@@ -7,10 +7,10 @@ import 'package:color_picker_android/widgets/w_slider_color.dart';
 import 'package:flutter/material.dart';
 
 class BodyPicker extends StatefulWidget {
-  final Color currentColor;
+  final Color currentColor;final bool isLightMode;
   final Function(Color color) onColorChange;
   const BodyPicker(
-      {super.key, required this.currentColor, required this.onColorChange});
+      {super.key, required this.currentColor, required this.onColorChange, required this.isLightMode});
 
   @override
   State<BodyPicker> createState() => _BodyPickerState();

@@ -9,9 +9,13 @@ import 'package:flutter/material.dart';
 
 class BodyHSB extends StatefulWidget {
   final Color currentColor;
+  final bool isLightMode;
   final Function(Color color) onColorChange;
   const BodyHSB(
-      {super.key, required this.currentColor, required this.onColorChange});
+      {super.key,
+      required this.currentColor,
+      required this.onColorChange,
+      required this.isLightMode});
 
   @override
   State<BodyHSB> createState() => _BodyPickerState();
@@ -186,7 +190,7 @@ class _BodyPickerState extends State<BodyHSB> {
   @override
   Widget build(BuildContext context) {
     _size = MediaQuery.sizeOf(context);
-    _widthColorBody = _size.width * 0.85; 
+    _widthColorBody = _size.width * 0.85;
     if (!_onPanning) {
       final initHsbColor = HSVColor.fromColor(widget.currentColor);
       _hsbHue = initHsbColor.hue;
@@ -217,7 +221,7 @@ class _BodyPickerState extends State<BodyHSB> {
       child: Column(
         children: [
           // hue widget
-          _buildTitle("Hue", "${_hsbHue.toStringAsFixed(0)}°"),
+          _buildTitle("Hue", "${_hsbHue.toStringAsFixed(0)}"),// °
           SliderColor(
               key: _keyHue,
               dotSize: _dotSize,
@@ -226,7 +230,7 @@ class _BodyPickerState extends State<BodyHSB> {
               sliderWidth: _widthColorBody),
           // saturation widget
           _buildTitle(
-              "Saturation", "${(_hsbSaturation * 100).toStringAsFixed(0)}%"),
+              "Saturation", "${(_hsbSaturation * 100).toStringAsFixed(0)}"),
           SliderColor(
               key: _keySaturation,
               dotSize: _dotSize,
@@ -238,7 +242,7 @@ class _BodyPickerState extends State<BodyHSB> {
               sliderWidth: _widthColorBody),
           // brightness widget
           _buildTitle(
-              "Brightness", "${(_hsbBrightness * 100).toStringAsFixed(0)}%"),
+              "Brightness", "${(_hsbBrightness * 100).toStringAsFixed(0)}"),
           SliderColor(
               key: _keyBrightness,
               dotSize: _dotSize,
@@ -248,7 +252,7 @@ class _BodyPickerState extends State<BodyHSB> {
               ],
               offsetTracker: _offsetTrackerBrightness,
               sliderWidth: _widthColorBody),
-          _buildPreviewColor()
+          // _buildPreviewColor()
         ],
       ),
     );
@@ -274,8 +278,16 @@ class _BodyPickerState extends State<BodyHSB> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          WTextContent(value: title),
-          WTextContent(value: value),
+          WTextContent(
+              value: title,
+              textColor: widget.isLightMode
+                  ? const Color.fromRGBO(0, 0, 0, 0.5)
+                  :  white05),
+          WTextContent(
+              value: value,
+              textColor: widget.isLightMode
+                  ? const Color.fromRGBO(0, 0, 0, 0.5)
+                  :  white05),
         ],
       ),
     );

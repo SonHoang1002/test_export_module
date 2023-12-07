@@ -73,7 +73,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 return StatefulBuilder(builder: (context, setStatefull) {
                   return ColorPicker(
                     key: _keyColorPicker,
-                    topicColor: const Color.fromRGBO(0, 0, 0, 0.05),
                     currentColor: _currentColor,
                     onDone: (color) {
                       setState(() {

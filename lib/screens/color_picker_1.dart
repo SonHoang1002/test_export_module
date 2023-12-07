@@ -2,6 +2,7 @@ import 'package:color_picker_android/commons/colors.dart';
 import 'package:color_picker_android/helpers/check_hex.dart';
 import 'package:color_picker_android/helpers/check_utf16.dart';
 import 'package:color_picker_android/helpers/convert.dart';
+import 'package:color_picker_android/helpers/navigator_route.dart';
 import 'package:color_picker_android/screens/bodies/body_hsb.dart';
 import 'package:color_picker_android/screens/bodies/body_palette.dart';
 import 'package:color_picker_android/screens/bodies/body_picker.dart';
@@ -10,6 +11,7 @@ import 'package:color_picker_android/widgets/w_keyboard.dart';
 import 'package:color_picker_android/widgets/w_text_content.dart';
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ColorPicker extends StatefulWidget {
@@ -39,7 +41,7 @@ class ColorPicker extends StatefulWidget {
       required this.onDone,
       required this.listColorSaved,
       this.onColorSave,
-      this.topicColor = colorGrey,
+      this.topicColor,
       this.colorIconSave,
       this.colorIconCheck,
       this.barrierColor});
@@ -48,7 +50,6 @@ class ColorPicker extends StatefulWidget {
 }
 
 class _ColorPickerState extends State<ColorPicker> {
-  final Color _segmentInactiveTextColor = const Color.fromRGBO(0, 0, 0, 0.5);
   final TextEditingController _hexController = TextEditingController(text: "");
   int _indexSegment = 0;
   late Size _size;
@@ -63,7 +64,7 @@ class _ColorPickerState extends State<ColorPicker> {
   List<Color> _listColorSaved = [];
   int _maxLengthInput = 7;
   bool _isValid = true;
-
+  late bool _isLightMode;
   void _onColorChange(Color color) {
     _unFocusKeyBoard();
     setState(() {
@@ -86,49 +87,68 @@ class _ColorPickerState extends State<ColorPicker> {
     _widthColorBody = _size.width * 0.85;
     _isSaved = _listColorSaved.contains(_selectedColor);
     _isValid = checkHexString(_hexController.text.trim());
+    Brightness _brightness =
+        View.of(context).platformDispatcher.platformBrightness;
+    _isLightMode = _brightness == Brightness.light;
+
     return Container(
-      alignment: Alignment.center,
-      color: widget.barrierColor,
+      height: double.infinity,
+      width: double.infinity,
+      color: transparent,
       child: Stack(
-        alignment: Alignment.center,
+        alignment: Alignment.bottomCenter,
         children: [
-          Container(
-            height: 480,
-            width: _size.width * 0.97,
-            decoration: BoxDecoration(
-                color: const Color.fromRGBO(249, 249, 249, 1),
-                borderRadius: BorderRadius.circular(20)),
-            padding: const EdgeInsets.only(top: 20),
-            child: Stack(
-              children: [
-                Column(
+          Positioned.fill(child: GestureDetector(
+            onTap: () {
+              popNavigator(context);
+            },
+          )),
+          Stack(
+            alignment: Alignment.bottomCenter,
+            children: [
+              Container(
+                height: 480 + (_showKeyBoard == true ? 120 : 0),
+                width: _size.width * 0.97,
+                decoration: BoxDecoration(
+                    color: _isLightMode
+                        ? const Color.fromRGBO(249, 249, 249, 1)
+                        : const Color.fromRGBO(29, 29, 29, 1),
+                    borderRadius: BorderRadius.circular(20)),
+                padding: const EdgeInsets.only(top: 20),
+                margin: const EdgeInsets.only(bottom: 5),
+                child: Stack(
                   children: [
-                    _buildTitleWidget(),
-                    const SizedBox(height: 20),
-                    _segmentedControl(),
-                    _buildBody(),
+                    Column(
+                      children: [
+                        _buildTitleWidget(),
+                        const SizedBox(height: 20),
+                        _segmentedControl(),
+                        _buildBody(),
+                      ],
+                    ),
                   ],
                 ),
-              ],
-            ),
+              ),
+              if (_showKeyBoard == true)
+                GestureDetector(
+                  onTap: () {
+                    _updateCurrentColor();
+                    _disableKeyBoard();
+                  },
+                  onPanStart: (details) {
+                    _updateCurrentColor();
+                    _disableKeyBoard();
+                  },
+                ),
+              Container(
+                  height: 480 + (_showKeyBoard == true ? 120 : 0),
+                  width: _size.width * 0.9,
+                  margin: const EdgeInsets.only(bottom: 5),
+                  padding: const EdgeInsets.only(top: 20),
+                  child: _buildTextFieldAndButtons()),
+              if (_showKeyBoard == true) _buildKeyBoard(),
+            ],
           ),
-          if (_showKeyBoard == true)
-            GestureDetector(
-              onTap: () {
-                _updateCurrentColor();
-                _disableKeyBoard();
-              },
-              onPanStart: (details) {
-                _updateCurrentColor();
-                _disableKeyBoard();
-              },
-            ),
-          Container(
-              height: 480,
-              width: _size.width * 0.9,
-              padding: const EdgeInsets.only(top: 20),
-              child: _buildTextFieldAndButtons()),
-          if (_showKeyBoard == true) _buildKeyBoard(),
         ],
       ),
     );
@@ -249,6 +269,7 @@ class _ColorPickerState extends State<ColorPicker> {
         children: [
           // 576ABC890
           CustomKeyboardWidget(
+            isLightMode: _isLightMode,
             onEnter: (value) {
               _insertText(value);
               if (_hexController.text.trim().length > _maxLengthInput - 1) {
@@ -287,7 +308,10 @@ class _ColorPickerState extends State<ColorPicker> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(),
-            WTextContent(value: "Colors"),
+            WTextContent(
+              value: "COLORS",
+              textColor: _isLightMode ? null : white07,
+            ),
             const SizedBox()
           ],
         ),
@@ -309,7 +333,7 @@ class _ColorPickerState extends State<ColorPicker> {
                   height: 30,
                   width: 80,
                   decoration: BoxDecoration(
-                      color: widget.topicColor,
+                      color: _isLightMode ? black005 : white01,
                       border:
                           Border.all(color: _isValid ? transparent : colorRed),
                       borderRadius: BorderRadius.circular(6.5)),
@@ -342,8 +366,10 @@ class _ColorPickerState extends State<ColorPicker> {
                     keyboardType: TextInputType.none,
                     controller: _hexController,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                        fontSize: 13, fontWeight: FontWeight.w700),
+                    style: TextStyle(
+                        color: _isLightMode ? black07 : white07,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700),
                     decoration: const InputDecoration(
                         border: InputBorder.none,
                         counterText: "",
@@ -377,14 +403,20 @@ class _ColorPickerState extends State<ColorPicker> {
                     height: 30,
                     padding: const EdgeInsets.all(7),
                     decoration: BoxDecoration(
-                        color: widget.topicColor,
+                        color: widget.topicColor ??
+                            (_isLightMode ? black005 : white005),
                         borderRadius: BorderRadius.circular(6.5)),
                     child: Icon(
                       _isSaved
                           ? FontAwesomeIcons.solidBookmark
                           : FontAwesomeIcons.bookmark,
                       size: 15,
-                      color: widget.colorIconSave ?? colorBlack,
+                      color: widget.colorIconSave ??
+                          (_isLightMode
+                              ? black07
+                              : _isSaved
+                                  ? white1
+                                  : white07),
                     )),
               ),
             ],
@@ -399,12 +431,14 @@ class _ColorPickerState extends State<ColorPicker> {
                 height: 30,
                 padding: const EdgeInsets.all(7),
                 decoration: BoxDecoration(
-                    color: widget.topicColor,
+                    color: widget.topicColor ??
+                        (_isLightMode ? black005 : white005),
                     borderRadius: BorderRadius.circular(20)),
                 child: Icon(
                   FontAwesomeIcons.check,
                   size: 15,
-                  color: widget.colorIconSave ?? colorBlack,
+                  color: widget.colorIconSave ??
+                      (_isLightMode ? black07 : white07),
                 )),
           ),
         ],
@@ -424,8 +458,7 @@ class _ColorPickerState extends State<ColorPicker> {
             "Palette",
             textAlign: TextAlign.center,
             style: TextStyle(
-              color:
-                  _indexSegment == 0 ? colorBlack : _segmentInactiveTextColor,
+              color: _getColorSegment(_indexSegment, 0),
               fontSize: 13,
               fontWeight: FontWeight.w500,
             ),
@@ -434,8 +467,7 @@ class _ColorPickerState extends State<ColorPicker> {
             "HSB",
             textAlign: TextAlign.center,
             style: TextStyle(
-              color:
-                  _indexSegment == 1 ? colorBlack : _segmentInactiveTextColor,
+              color: _getColorSegment(_indexSegment, 1),
               fontSize: 13,
               fontWeight: FontWeight.w500,
             ),
@@ -444,8 +476,7 @@ class _ColorPickerState extends State<ColorPicker> {
             "Picker",
             textAlign: TextAlign.center,
             style: TextStyle(
-              color:
-                  _indexSegment == 2 ? colorBlack : _segmentInactiveTextColor,
+              color: _getColorSegment(_indexSegment, 2),
               fontSize: 13,
               fontWeight: FontWeight.w500,
             ),
@@ -454,20 +485,19 @@ class _ColorPickerState extends State<ColorPicker> {
             "Saved",
             textAlign: TextAlign.center,
             style: TextStyle(
-              color:
-                  _indexSegment == 3 ? colorBlack : _segmentInactiveTextColor,
+              color: _getColorSegment(_indexSegment, 3),
               fontSize: 13,
               fontWeight: FontWeight.w500,
             ),
           )
         },
         decoration: BoxDecoration(
-          color: widget.topicColor,
-          borderRadius: BorderRadius.circular(36),
+          color: widget.topicColor ?? (_isLightMode ? black005 : white01),
+          borderRadius: BorderRadius.circular(11),
         ),
         padding: 10,
         thumbDecoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(36),
+          borderRadius: BorderRadius.circular(11),
           color: colorWhite,
         ),
         onValueChanged: (int value) {
@@ -484,27 +514,43 @@ class _ColorPickerState extends State<ColorPicker> {
     switch (_indexSegment) {
       case 0:
         return BodyPalette(
-          currentColor: _selectedColor,
-          onColorChange: _onColorChange,
-        );
+            currentColor: _selectedColor,
+            onColorChange: _onColorChange,
+            isLightMode: _isLightMode);
       case 1:
         return BodyHSB(
-          currentColor: _selectedColor,
-          onColorChange: _onColorChange,
-        );
+            currentColor: _selectedColor,
+            onColorChange: _onColorChange,
+            isLightMode: _isLightMode);
       case 2:
         return BodyPicker(
-          currentColor: _selectedColor,
-          onColorChange: _onColorChange,
-        );
+            currentColor: _selectedColor,
+            onColorChange: _onColorChange,
+            isLightMode: _isLightMode);
       case 3:
         return BodySaved(
-          currentColor: _selectedColor,
-          listColorSaved: _listColorSaved,
-          onColorChange: _onColorChange,
-        );
+            currentColor: _selectedColor,
+            listColorSaved: _listColorSaved,
+            onColorChange: _onColorChange,
+            isLightMode: _isLightMode);
       default:
         return const SizedBox();
+    }
+  }
+
+  Color _getColorSegment(int indexSegment, int checkValue) {
+    if (_isLightMode) {
+      if (indexSegment == checkValue) {
+        return colorBlack;
+      } else {
+        return black05;
+      }
+    } else {
+      if (indexSegment == checkValue) {
+        return colorBlack;
+      } else {
+        return white05;
+      }
     }
   }
 }
