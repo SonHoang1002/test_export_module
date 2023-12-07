@@ -7,10 +7,16 @@ import 'package:color_picker_android/widgets/w_slider_color.dart';
 import 'package:flutter/material.dart';
 
 class BodyPicker extends StatefulWidget {
-  final Color currentColor;final bool isLightMode;
+  final Color currentColor;
+  final bool isLightMode;
   final Function(Color color) onColorChange;
+  final bool? isShowKeyboard;
   const BodyPicker(
-      {super.key, required this.currentColor, required this.onColorChange, required this.isLightMode});
+      {super.key,
+      required this.currentColor,
+      required this.onColorChange,
+      required this.isLightMode,
+      this.isShowKeyboard});
 
   @override
   State<BodyPicker> createState() => _BodyPickerState();
@@ -172,7 +178,7 @@ class _BodyPickerState extends State<BodyPicker> {
   @override
   Widget build(BuildContext context) {
     _size = MediaQuery.sizeOf(context);
-    _widthColorBody = _size.width * 0.85; 
+    _widthColorBody = _size.width * 0.85;
     if (!_onPanning) {
       final hsvColor = HSVColor.fromColor(widget.currentColor);
       _hsvHue = hsvColor.hue;
@@ -184,6 +190,9 @@ class _BodyPickerState extends State<BodyPicker> {
       margin: const EdgeInsets.only(top: 20),
       child: GestureDetector(
         onTapDown: (details) {
+          if (widget.isShowKeyboard == true) {
+            return;
+          }
           _onPanning = true;
           _checkInside(details.globalPosition);
           _updatePositionAndHSVProperty(details.globalPosition);
@@ -199,6 +208,9 @@ class _BodyPickerState extends State<BodyPicker> {
           _disableInside();
         },
         onPanStart: (details) {
+          if (widget.isShowKeyboard == true) {
+            return;
+          }
           _onPanning = true;
           _checkInside(details.globalPosition);
         },

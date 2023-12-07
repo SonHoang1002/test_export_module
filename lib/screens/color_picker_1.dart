@@ -66,7 +66,7 @@ class _ColorPickerState extends State<ColorPicker> {
   //
   List<Color> _listColorSaved = [];
   int _maxLengthInput = 7;
-  bool _isValid = true; 
+  bool _isValid = true;
   void _onColorChange(Color color) {
     _unFocusKeyBoard();
     setState(() {
@@ -88,7 +88,7 @@ class _ColorPickerState extends State<ColorPicker> {
     _size = MediaQuery.of(context).size;
     _widthColorBody = _size.width * 0.85;
     _isSaved = _listColorSaved.contains(_selectedColor);
-    _isValid = checkHexString(_hexController.text.trim()); 
+    _isValid = checkHexString(_hexController.text.trim());
 
     return Container(
       height: double.infinity,
@@ -106,7 +106,7 @@ class _ColorPickerState extends State<ColorPicker> {
             alignment: Alignment.bottomCenter,
             children: [
               Container(
-                height: 480 + (_showKeyBoard == true ? 120 : 0),
+                height: 480, //+ (_showKeyBoard == true ? 120 : 0),
                 width: _size.width * 0.97,
                 decoration: BoxDecoration(
                     color: widget.isLightMode
@@ -140,7 +140,7 @@ class _ColorPickerState extends State<ColorPicker> {
                   },
                 ),
               Container(
-                  height: 480 + (_showKeyBoard == true ? 120 : 0),
+                  height: 480, //+ (_showKeyBoard == true ? 120 : 0),
                   width: _size.width * 0.9,
                   margin: const EdgeInsets.only(bottom: 5),
                   padding: const EdgeInsets.only(top: 20),
@@ -520,12 +520,13 @@ class _ColorPickerState extends State<ColorPicker> {
         return BodyHSB(
             currentColor: _selectedColor,
             onColorChange: _onColorChange,
-            isLightMode: widget.isLightMode);
+            isLightMode: widget.isLightMode,
+            isShowKeyboard: _showKeyBoard);
       case 2:
         return BodyPicker(
             currentColor: _selectedColor,
             onColorChange: _onColorChange,
-            isLightMode: widget.isLightMode);
+            isLightMode: widget.isLightMode,isShowKeyboard: _showKeyBoard);
       case 3:
         return BodySaved(
             currentColor: _selectedColor,

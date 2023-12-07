@@ -11,11 +11,13 @@ class BodyHSB extends StatefulWidget {
   final Color currentColor;
   final bool isLightMode;
   final Function(Color color) onColorChange;
+  final bool? isShowKeyboard;
   const BodyHSB(
       {super.key,
       required this.currentColor,
       required this.onColorChange,
-      required this.isLightMode});
+      required this.isLightMode,
+      this.isShowKeyboard});
 
   @override
   State<BodyHSB> createState() => _BodyPickerState();
@@ -200,6 +202,9 @@ class _BodyPickerState extends State<BodyHSB> {
     }
     return GestureDetector(
       onPanStart: (details) {
+        if (widget.isShowKeyboard == true) {
+          return;
+        }
         _onPanning = true;
         _checkInside(details.globalPosition);
       },
@@ -214,6 +219,9 @@ class _BodyPickerState extends State<BodyHSB> {
         _disableInside();
       },
       onTapDown: (details) {
+        if (widget.isShowKeyboard == true) {
+          return;
+        }
         _onPanning = true;
         _checkInside(details.globalPosition);
         _updatePositionAndHSBProperties(details.globalPosition);
@@ -221,7 +229,7 @@ class _BodyPickerState extends State<BodyHSB> {
       child: Column(
         children: [
           // hue widget
-          _buildTitle("Hue", "${_hsbHue.toStringAsFixed(0)}"),// °
+          _buildTitle("Hue", _hsbHue.toStringAsFixed(0)), // °
           SliderColor(
               key: _keyHue,
               dotSize: _dotSize,
@@ -229,8 +237,7 @@ class _BodyPickerState extends State<BodyHSB> {
               offsetTracker: _offsetTrackerHue,
               sliderWidth: _widthColorBody),
           // saturation widget
-          _buildTitle(
-              "Saturation", "${(_hsbSaturation * 100).toStringAsFixed(0)}"),
+          _buildTitle("Saturation", (_hsbSaturation * 100).toStringAsFixed(0)),
           SliderColor(
               key: _keySaturation,
               dotSize: _dotSize,
@@ -241,8 +248,7 @@ class _BodyPickerState extends State<BodyHSB> {
               offsetTracker: _offsetTrackerSaturation,
               sliderWidth: _widthColorBody),
           // brightness widget
-          _buildTitle(
-              "Brightness", "${(_hsbBrightness * 100).toStringAsFixed(0)}"),
+          _buildTitle("Brightness", (_hsbBrightness * 100).toStringAsFixed(0)),
           SliderColor(
               key: _keyBrightness,
               dotSize: _dotSize,
@@ -282,12 +288,12 @@ class _BodyPickerState extends State<BodyHSB> {
               value: title,
               textColor: widget.isLightMode
                   ? const Color.fromRGBO(0, 0, 0, 0.5)
-                  :  white05),
+                  : white05),
           WTextContent(
               value: value,
               textColor: widget.isLightMode
                   ? const Color.fromRGBO(0, 0, 0, 0.5)
-                  :  white05),
+                  : white05),
         ],
       ),
     );
