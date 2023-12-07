@@ -94,6 +94,7 @@ class _ColorPickerState extends State<ColorPicker> {
       height: double.infinity,
       width: double.infinity,
       color: transparent,
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: [
