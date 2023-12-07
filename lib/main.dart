@@ -67,15 +67,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   Color(int.parse(e.split('(0x')[1].split(')')[0], radix: 16)))
               .toList();
           // ignore: use_build_context_synchronously
-          Brightness _brightness =
-              View.of(context).platformDispatcher.platformBrightness;
-          bool _isLightMode = _brightness == Brightness.light;
           showModalBottomSheet(
               context: context,
               builder: (ctx) {
                 return StatefulBuilder(builder: (context, setStatefull) {
                   return ColorPicker(
-                    isLightMode: _isLightMode,
+                    isLightMode: false,
                     key: _keyColorPicker,
                     currentColor: _currentColor,
                     onDone: (color) {

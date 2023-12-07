@@ -67,7 +67,7 @@ class _ColorPickerState extends State<ColorPicker> {
   List<Color> _listColorSaved = [];
   int _maxLengthInput = 7;
   bool _isValid = true;
-  late bool _isLightMode;
+  // late bool widget.isLightMode;
   void _onColorChange(Color color) {
     _unFocusKeyBoard();
     setState(() {
@@ -90,9 +90,7 @@ class _ColorPickerState extends State<ColorPicker> {
     _widthColorBody = _size.width * 0.85;
     _isSaved = _listColorSaved.contains(_selectedColor);
     _isValid = checkHexString(_hexController.text.trim());
-    Brightness _brightness =
-        View.of(context).platformDispatcher.platformBrightness;
-    _isLightMode = widget.isLightMode;
+    // widget.isLightMode = widget.isLightMode;
 
     return Container(
       height: double.infinity,
@@ -113,7 +111,7 @@ class _ColorPickerState extends State<ColorPicker> {
                 height: 480 + (_showKeyBoard == true ? 120 : 0),
                 width: _size.width * 0.97,
                 decoration: BoxDecoration(
-                    color: _isLightMode
+                    color: widget.isLightMode
                         ? const Color.fromRGBO(249, 249, 249, 1)
                         : const Color.fromRGBO(29, 29, 29, 1),
                     borderRadius: BorderRadius.circular(20)),
@@ -272,7 +270,7 @@ class _ColorPickerState extends State<ColorPicker> {
         children: [
           // 576ABC890
           CustomKeyboardWidget(
-            isLightMode: _isLightMode,
+            isLightMode: widget.isLightMode,
             onEnter: (value) {
               _insertText(value);
               if (_hexController.text.trim().length > _maxLengthInput - 1) {
@@ -313,7 +311,7 @@ class _ColorPickerState extends State<ColorPicker> {
             const SizedBox(),
             WTextContent(
               value: "COLORS",
-              textColor: _isLightMode ? null : white07,
+              textColor: widget.isLightMode ? null : white07,
             ),
             const SizedBox()
           ],
@@ -336,7 +334,7 @@ class _ColorPickerState extends State<ColorPicker> {
                   height: 30,
                   width: 80,
                   decoration: BoxDecoration(
-                      color: _isLightMode ? black005 : white01,
+                      color: widget.isLightMode ? black005 : white01,
                       border:
                           Border.all(color: _isValid ? transparent : colorRed),
                       borderRadius: BorderRadius.circular(6.5)),
@@ -370,7 +368,7 @@ class _ColorPickerState extends State<ColorPicker> {
                     controller: _hexController,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                        color: _isLightMode ? black07 : white07,
+                        color: widget.isLightMode ? black07 : white07,
                         fontSize: 13,
                         fontWeight: FontWeight.w700),
                     decoration: const InputDecoration(
@@ -407,7 +405,7 @@ class _ColorPickerState extends State<ColorPicker> {
                     padding: const EdgeInsets.all(7),
                     decoration: BoxDecoration(
                         color: widget.topicColor ??
-                            (_isLightMode ? black005 : white005),
+                            (widget.isLightMode ? black005 : white005),
                         borderRadius: BorderRadius.circular(6.5)),
                     child: Icon(
                       _isSaved
@@ -415,7 +413,7 @@ class _ColorPickerState extends State<ColorPicker> {
                           : FontAwesomeIcons.bookmark,
                       size: 15,
                       color: widget.colorIconSave ??
-                          (_isLightMode
+                          (widget.isLightMode
                               ? black07
                               : _isSaved
                                   ? white1
@@ -435,13 +433,13 @@ class _ColorPickerState extends State<ColorPicker> {
                 padding: const EdgeInsets.all(7),
                 decoration: BoxDecoration(
                     color: widget.topicColor ??
-                        (_isLightMode ? black005 : white005),
+                        (widget.isLightMode ? black005 : white005),
                     borderRadius: BorderRadius.circular(20)),
                 child: Icon(
                   FontAwesomeIcons.check,
                   size: 15,
                   color: widget.colorIconSave ??
-                      (_isLightMode ? black07 : white07),
+                      (widget.isLightMode ? black07 : white07),
                 )),
           ),
         ],
@@ -495,7 +493,7 @@ class _ColorPickerState extends State<ColorPicker> {
           )
         },
         decoration: BoxDecoration(
-          color: widget.topicColor ?? (_isLightMode ? black005 : white01),
+          color: widget.topicColor ?? (widget.isLightMode ? black005 : white01),
           borderRadius: BorderRadius.circular(11),
         ),
         padding: 10,
@@ -519,30 +517,30 @@ class _ColorPickerState extends State<ColorPicker> {
         return BodyPalette(
             currentColor: _selectedColor,
             onColorChange: _onColorChange,
-            isLightMode: _isLightMode);
+            isLightMode: widget.isLightMode);
       case 1:
         return BodyHSB(
             currentColor: _selectedColor,
             onColorChange: _onColorChange,
-            isLightMode: _isLightMode);
+            isLightMode: widget.isLightMode);
       case 2:
         return BodyPicker(
             currentColor: _selectedColor,
             onColorChange: _onColorChange,
-            isLightMode: _isLightMode);
+            isLightMode: widget.isLightMode);
       case 3:
         return BodySaved(
             currentColor: _selectedColor,
             listColorSaved: _listColorSaved,
             onColorChange: _onColorChange,
-            isLightMode: _isLightMode);
+            isLightMode: widget.isLightMode);
       default:
         return const SizedBox();
     }
   }
 
   Color _getColorSegment(int indexSegment, int checkValue) {
-    if (_isLightMode) {
+    if (widget.isLightMode) {
       if (indexSegment == checkValue) {
         return colorBlack;
       } else {
