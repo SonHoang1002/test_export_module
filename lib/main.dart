@@ -5,6 +5,8 @@ import 'package:color_picker_android/commons/constant.dart';
 import 'package:color_picker_android/helpers/navigator_route.dart';
 import 'package:color_picker_android/screens/color_picker_1.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart'
+    as flutter_colorpicker;
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -56,50 +58,78 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Container(color: _currentColor),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          // Obtain shared preferences.
-          final SharedPreferences prefs = await SharedPreferences.getInstance();
-          List<String> listColorString =
-              prefs.getStringList(PREFERENCE_SAVED_COLOR_KEY) ?? [];
-          List<Color> listSavedColor = listColorString
-              .map((e) =>
-                  Color(int.parse(e.split('(0x')[1].split(')')[0], radix: 16)))
-              .toList();
-          // ignore: use_build_context_synchronously
-          showModalBottomSheet(
-              context: context,
-              builder: (ctx) {
-                return StatefulBuilder(builder: (context, setStatefull) {
-                  return ColorPicker(
-                    isLightMode: true,
-                    key: _keyColorPicker,
-                    currentColor: _currentColor,
-                    onDone: (color) {
-                      setState(() {
-                        _currentColor = color;
-                      });
-                      popNavigator(context);
-                    },
-                    listColorSaved: listSavedColor,
-                    onColorSave: (Color color) async {
-                      // kiem tra xem co mau do trong list chua
-                      if (listSavedColor.contains(color)) {
-                        listSavedColor = List.from(listSavedColor
-                            .where((element) => element != color)
-                            .toList());
-                      } else {
-                        listSavedColor = [color, ...List.from(listSavedColor)];
-                      }
-                      await prefs.setStringList(PREFERENCE_SAVED_COLOR_KEY,
-                          listSavedColor.map((e) => e.toString()).toList());
-                    },
-                  );
-                });
-              },
-              backgroundColor: transparent,
-              isScrollControlled: true);
-        },
+      floatingActionButton: Row(
+        children: [
+          FloatingActionButton(
+            heroTag: "f1",
+            onPressed: () async {
+              // Obtain shared preferences.
+              final SharedPreferences prefs =
+                  await SharedPreferences.getInstance();
+              List<String> listColorString =
+                  prefs.getStringList(PREFERENCE_SAVED_COLOR_KEY) ?? [];
+              List<Color> listSavedColor = listColorString
+                  .map((e) => Color(
+                      int.parse(e.split('(0x')[1].split(')')[0], radix: 16)))
+                  .toList();
+              // ignore: use_build_context_synchronously
+              showModalBottomSheet(
+                  context: context,
+                  builder: (ctx) {
+                    return StatefulBuilder(builder: (context, setStatefull) {
+                      return ColorPicker(
+                        isLightMode: true,
+                        key: _keyColorPicker,
+                        currentColor: _currentColor,
+                        onDone: (color) {
+                          setState(() {
+                            _currentColor = color;
+                          });
+                          popNavigator(context);
+                        },
+                        listColorSaved: listSavedColor,
+                        onColorSave: (Color color) async {
+                          // kiem tra xem co mau do trong list chua
+                          if (listSavedColor.contains(color)) {
+                            listSavedColor = List.from(listSavedColor
+                                .where((element) => element != color)
+                                .toList());
+                          } else {
+                            listSavedColor = [
+                              color,
+                              ...List.from(listSavedColor)
+                            ];
+                          }
+                          await prefs.setStringList(PREFERENCE_SAVED_COLOR_KEY,
+                              listSavedColor.map((e) => e.toString()).toList());
+                        },
+                      );
+                    });
+                  },
+                  backgroundColor: transparent,
+                  isScrollControlled: true);
+            },
+          ),
+          FloatingActionButton(
+            heroTag: "f2",
+            onPressed: () async {
+              showModalBottomSheet(
+                  context: context,
+                  builder: (ctx) {
+                    return StatefulBuilder(builder: (context, setStatefull) {
+                      return Container(height: 600,width:400,
+                        child: Center(
+                          child: flutter_colorpicker.ColorPicker(
+                              pickerColor: colorWhite, onColorChanged: (color) {}),
+                        ),
+                      );
+                    });
+                  },
+                  backgroundColor: transparent,
+                  isScrollControlled: true);
+            },
+          ),
+        ],
       ),
     );
   }

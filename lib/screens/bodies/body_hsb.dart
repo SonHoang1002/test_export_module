@@ -198,6 +198,7 @@ class _BodyPickerState extends State<BodyHSB> {
       _hsbHue = initHsbColor.hue;
       _hsbBrightness = initHsbColor.value;
       _hsbSaturation = initHsbColor.saturation;
+
       _changePositionWithHSVColor(initHsbColor);
     }
     return GestureDetector(
@@ -244,6 +245,7 @@ class _BodyPickerState extends State<BodyHSB> {
               listGradientColor: [
                 const Color.fromRGBO(216, 216, 216, 1),
                 HSVColor.fromAHSV(1, _hsbHue, 1, 1).toColor()
+                // HSVColor.fromAHSV(1, _hsbHue, _hsbSaturation, _hsbBrightness).toColor()
               ],
               offsetTracker: _offsetTrackerSaturation,
               sliderWidth: _widthColorBody),
@@ -258,10 +260,19 @@ class _BodyPickerState extends State<BodyHSB> {
               ],
               offsetTracker: _offsetTrackerBrightness,
               sliderWidth: _widthColorBody),
-          // _buildPreviewColor()
+          _buildPreviewColor()
         ],
       ),
     );
+  }
+
+  _check() {
+    if (_hsbBrightness == 0) {
+      return colorBlack;
+    }
+    if (_hsbSaturation == 0) {
+      return colorWhite;
+    }
   }
 
   Widget _buildPreviewColor() {

@@ -39,6 +39,7 @@ dependencies:
   keyboard_actions: ^4.2.0
   font_awesome_flutter: ^10.6.0
   shared_preferences: ^2.2.2
+  flutter_colorpicker: ^1.0.3
 
 dev_dependencies:
   flutter_test:
