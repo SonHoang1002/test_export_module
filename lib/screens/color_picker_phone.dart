@@ -13,7 +13,7 @@ import 'package:custom_sliding_segmented_control/custom_sliding_segmented_contro
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class ColorPicker extends StatefulWidget {
+class ColorPickerPhone extends StatefulWidget {
   final Color currentColor;
 
   /// call on click to done button
@@ -34,17 +34,13 @@ class ColorPicker extends StatefulWidget {
 
   final Color? barrierColor;
   final bool isLightMode;
-  final double height;
-  final double? width;
 
-  const ColorPicker({
+  const ColorPickerPhone({
     super.key,
     required this.currentColor,
     required this.onDone,
     required this.listColorSaved,
     required this.isLightMode,
-    this.height = 520,
-    this.width,
     this.onColorSave,
     this.topicColor,
     this.colorIconSave,
@@ -52,10 +48,10 @@ class ColorPicker extends StatefulWidget {
     this.barrierColor,
   });
   @override
-  State<ColorPicker> createState() => _ColorPickerState();
+  State<ColorPickerPhone> createState() => _ColorPickerPhoneState();
 }
 
-class _ColorPickerState extends State<ColorPicker> {
+class _ColorPickerPhoneState extends State<ColorPickerPhone> {
   final TextEditingController _hexController = TextEditingController(text: "");
   int _indexSegment = 0;
   late Size _size;
@@ -88,7 +84,7 @@ class _ColorPickerState extends State<ColorPicker> {
   @override
   Widget build(BuildContext context) {
     _size = MediaQuery.of(context).size;
-    _widthColorBody = widget.width ?? _size.width * 0.85;
+    _widthColorBody = _size.width * 0.85;
     _isSaved = _listColorSaved.contains(_selectedColor);
     _isValid = checkHexString(_hexController.text.trim());
 
@@ -108,8 +104,8 @@ class _ColorPickerState extends State<ColorPicker> {
             alignment: Alignment.bottomCenter,
             children: [
               Container(
-                height: widget.height + (_showKeyBoard == true ? 120 : 0),
-                width: widget.width ?? _size.width * 0.97,
+                height: 520 + (_showKeyBoard == true ? 120 : 0),
+                width: _size.width * 0.97,
                 decoration: BoxDecoration(
                     color: widget.isLightMode
                         ? const Color.fromRGBO(249, 249, 249, 1)
@@ -143,7 +139,7 @@ class _ColorPickerState extends State<ColorPicker> {
                   },
                 ),
               Container(
-                  height: widget.height + (_showKeyBoard == true ? 120 : 0),
+                  height: 520 + (_showKeyBoard == true ? 120 : 0),
                   width: _size.width * 0.9,
                   margin: const EdgeInsets.only(bottom: 5),
                   padding: const EdgeInsets.only(top: 20),

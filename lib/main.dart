@@ -1,9 +1,8 @@
-import 'dart:math';
-
+import 'package:color_picker_android/color_picker_flutter.dart';
 import 'package:color_picker_android/commons/colors.dart';
 import 'package:color_picker_android/commons/constant.dart';
 import 'package:color_picker_android/helpers/navigator_route.dart';
-import 'package:color_picker_android/screens/color_picker_1.dart';
+import 'package:color_picker_android/screens/color_picker_tablet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart'
     as flutter_colorpicker;
@@ -59,6 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Container(color: _currentColor),
       floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           FloatingActionButton(
             heroTag: "f1",
@@ -77,7 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   context: context,
                   builder: (ctx) {
                     return StatefulBuilder(builder: (context, setStatefull) {
-                      return ColorPicker(
+                      return ColorPickerTablet(
                         isLightMode: true,
                         key: _keyColorPicker,
                         currentColor: _currentColor,
@@ -103,6 +103,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           await prefs.setStringList(PREFERENCE_SAVED_COLOR_KEY,
                               listSavedColor.map((e) => e.toString()).toList());
                         },
+                        height: MediaQuery.sizeOf(context).height*0.8,
+                        width: MediaQuery.sizeOf(context).width,
                       );
                     });
                   },
@@ -110,25 +112,26 @@ class _MyHomePageState extends State<MyHomePage> {
                   isScrollControlled: true);
             },
           ),
-          FloatingActionButton(
-            heroTag: "f2",
-            onPressed: () async {
-              showModalBottomSheet(
-                  context: context,
-                  builder: (ctx) {
-                    return StatefulBuilder(builder: (context, setStatefull) {
-                      return Container(height: 600,width:400,
-                        child: Center(
-                          child: flutter_colorpicker.ColorPicker(
-                              pickerColor: colorWhite, onColorChanged: (color) {}),
-                        ),
-                      );
-                    });
-                  },
-                  backgroundColor: transparent,
-                  isScrollControlled: true);
-            },
-          ),
+
+          // FloatingActionButton(
+          //   heroTag: "f2",
+          //   onPressed: () async {
+          //     showModalBottomSheet(
+          //         context: context,
+          //         builder: (ctx) {
+          //           return StatefulBuilder(builder: (context, setStatefull) {
+          //             return Container(height: 600,width:400,
+          //               child: Center(
+          //                 child: flutter_colorpicker.ColorPicker(
+          //                     pickerColor: colorWhite, onColorChanged: (color) {}),
+          //               ),
+          //             );
+          //           });
+          //         },
+          //         backgroundColor: transparent,
+          //         isScrollControlled: true);
+          //   },
+          // ),
         ],
       ),
     );
