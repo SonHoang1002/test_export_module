@@ -11,7 +11,6 @@ import 'package:color_picker_android/widgets/w_keyboard.dart';
 import 'package:color_picker_android/widgets/w_text_content.dart';
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ColorPicker extends StatefulWidget {
@@ -35,6 +34,8 @@ class ColorPicker extends StatefulWidget {
 
   final Color? barrierColor;
   final bool isLightMode;
+  final double height;
+  final double? width;
 
   const ColorPicker({
     super.key,
@@ -42,6 +43,8 @@ class ColorPicker extends StatefulWidget {
     required this.onDone,
     required this.listColorSaved,
     required this.isLightMode,
+    this.height = 520,
+    this.width,
     this.onColorSave,
     this.topicColor,
     this.colorIconSave,
@@ -62,7 +65,6 @@ class _ColorPickerState extends State<ColorPicker> {
   late double _widthColorBody;
   // disable widget
   final GlobalKey _keyTextField = GlobalKey(debugLabel: "_keyTextField");
-  Offset? _offsetDisable;
   //
   List<Color> _listColorSaved = [];
   int _maxLengthInput = 7;
@@ -86,7 +88,7 @@ class _ColorPickerState extends State<ColorPicker> {
   @override
   Widget build(BuildContext context) {
     _size = MediaQuery.of(context).size;
-    _widthColorBody = _size.width * 0.85;
+    _widthColorBody = widget.width ?? _size.width * 0.85;
     _isSaved = _listColorSaved.contains(_selectedColor);
     _isValid = checkHexString(_hexController.text.trim());
 
@@ -106,8 +108,8 @@ class _ColorPickerState extends State<ColorPicker> {
             alignment: Alignment.bottomCenter,
             children: [
               Container(
-                height: 520 + (_showKeyBoard == true ? 120 : 0),
-                width: _size.width * 0.97,
+                height: widget.height + (_showKeyBoard == true ? 120 : 0),
+                width: widget.width ?? _size.width * 0.97,
                 decoration: BoxDecoration(
                     color: widget.isLightMode
                         ? const Color.fromRGBO(249, 249, 249, 1)
@@ -141,7 +143,7 @@ class _ColorPickerState extends State<ColorPicker> {
                   },
                 ),
               Container(
-                  height: 520 + (_showKeyBoard == true ? 120 : 0),
+                  height: widget.height + (_showKeyBoard == true ? 120 : 0),
                   width: _size.width * 0.9,
                   margin: const EdgeInsets.only(bottom: 5),
                   padding: const EdgeInsets.only(top: 20),
@@ -343,8 +345,6 @@ class _ColorPickerState extends State<ColorPicker> {
                         _showKeyBoard = true;
                         final renderBoxTextField = _keyTextField.currentContext
                             ?.findRenderObject() as RenderBox;
-                        _offsetDisable = renderBoxTextField
-                            .localToGlobal(const Offset(0, 0));
                       });
                     },
                     onChanged: (value) {
