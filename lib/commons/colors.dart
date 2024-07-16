@@ -24,14 +24,6 @@ const Color gradient_2 = Color(0xFFB250FF);
 const Color colorGrey = Colors.grey;
 const Color colorabc = Color(0XFFFF3F33);
 
-// const Color colorWhite_1 = Color(0xFF0000001A);
-
-// const Color colorBlack_5 = Color(0xFF00000080);
-
-// const Color color2Blue = Color(0xFF62A1FF);
-
-// const Color colorLight2Blue = Color(0xFF84B5FF);
-
 const Color guidePrimary = Color(0xFF6200EE);
 const Color guidePrimaryVariant = Color(0xFF3700B3);
 const Color guideSecondary = Color(0xFF03DAC6);
@@ -52,9 +44,3 @@ const Color black07 = Color.fromRGBO(0, 0, 0, 0.7);
 const Color black05 = Color.fromRGBO(0, 0, 0, 0.5);
 const Color black005 = Color.fromRGBO(0, 0, 0, 0.05);
 const Color black01 = Color.fromRGBO(0, 0, 0, 0.1);
-
-// const Color black005=  Color.fromRGBO(0, 0, 0, 0.05);
-// const Color black005=  Color.fromRGBO(0, 0, 0, 0.05);
-// const Color black005=  Color.fromRGBO(0, 0, 0, 0.05);
-// const Color black005=  Color.fromRGBO(0, 0, 0, 0.05);
-// const Color black005=  Color.fromRGBO(0, 0, 0, 0.05);

@@ -52,17 +52,16 @@ class WTextContent extends StatelessWidget {
             textAlign: textAlign,
             maxLines: textMaxLength,
             style: TextStyle(
-                decoration: TextDecoration.none,
-                fontSize: (textSize! + 1.0),
-                color:
-                    textColor ?? Theme.of(context).textTheme.bodySmall!.color,
-                fontWeight: textFontWeight,
-                // fontFamily: MY_CUSTOM_FONT,
-                overflow: textOverflow,
-                
-                height: textLineHeight != null && textSize != null
-                    ? (textLineHeight! / textSize!)
-                    : null),
+              decoration: TextDecoration.none,
+              fontSize: (textSize! + 1.0),
+              color: textColor ?? Theme.of(context).textTheme.bodySmall!.color,
+              fontWeight: textFontWeight,
+              // fontFamily: MY_CUSTOM_FONT,
+              overflow: textOverflow,
+              height: textLineHeight != null && textSize != null
+                  ? (textLineHeight! / textSize!)
+                  : null,
+            ),
           );
   }
 }

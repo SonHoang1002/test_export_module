@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:color_picker_android/commons/colors.dart';
 import 'package:color_picker_android/helpers/check_hex.dart';
 import 'package:color_picker_android/helpers/check_utf16.dart';
@@ -17,10 +19,13 @@ class ColorPickerTablet extends StatefulWidget {
   final Color currentColor;
 
   /// call on click to done button
-  final Function(Color color) onDone;
+  final void Function(Color color) onDone;
 
   /// call on click to save button
-  final Function(Color color)? onColorSave;
+  final void Function(Color color)? onColorSave;
+
+  /// call on change color by draging anything
+  final void Function(Color color)? onColorChange;
 
   /// color list to render for save tab
   final List<Color> listColorSaved;
@@ -34,8 +39,6 @@ class ColorPickerTablet extends StatefulWidget {
 
   final Color? barrierColor;
   final bool isLightMode;
-  final double height;
-  final double? width;
 
   const ColorPickerTablet({
     super.key,
@@ -43,13 +46,12 @@ class ColorPickerTablet extends StatefulWidget {
     required this.onDone,
     required this.listColorSaved,
     required this.isLightMode,
-    this.height = 520,
-    this.width,
     this.onColorSave,
     this.topicColor,
     this.colorIconSave,
     this.colorIconCheck,
     this.barrierColor,
+    this.onColorChange,
   });
   @override
   State<ColorPickerTablet> createState() => _ColorPickerTabletState();
@@ -59,6 +61,7 @@ class _ColorPickerTabletState extends State<ColorPickerTablet> {
   final TextEditingController _hexController = TextEditingController(text: "");
   int _indexSegment = 0;
   late Size _size;
+  late Size _mainSize;
   late Color _selectedColor;
   bool? _showKeyBoard = false;
   bool _isSaved = false;
@@ -69,13 +72,6 @@ class _ColorPickerTabletState extends State<ColorPickerTablet> {
   List<Color> _listColorSaved = [];
   int _maxLengthInput = 7;
   bool _isValid = true;
-  void _onColorChange(Color color) {
-    _unFocusKeyBoard();
-    setState(() {
-      _selectedColor = color;
-      _hexController.text = convertColorToHexString(_selectedColor);
-    });
-  }
 
   @override
   void initState() {
@@ -85,15 +81,24 @@ class _ColorPickerTabletState extends State<ColorPickerTablet> {
     _hexController.text = convertColorToHexString(_selectedColor);
   }
 
+  void _onColorChange(Color color) {
+    _unFocusKeyBoard();
+    _selectedColor = color;
+    _hexController.text = convertColorToHexString(_selectedColor);
+    if (widget.onColorChange != null) {
+      widget.onColorChange!(color);
+    }
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     _size = MediaQuery.of(context).size;
-    _widthColorBody = (widget.width ?? _size.width) * 0.85;
+    _mainSize = Size(min(600, _size.height), _size.height);
+    _widthColorBody = (_mainSize.width) * 0.85;
     _isSaved = _listColorSaved.contains(_selectedColor);
     _isValid = checkHexString(_hexController.text.trim());
-
     return Container(
-      height: double.infinity,
       width: double.infinity,
       color: transparent,
       child: Stack(
@@ -108,8 +113,8 @@ class _ColorPickerTabletState extends State<ColorPickerTablet> {
             alignment: Alignment.bottomCenter,
             children: [
               Container(
-                height: widget.height + (_showKeyBoard == true ? 120 : 0),
-                width: widget.width ?? _size.width * 0.97,
+                height: 600 + (_showKeyBoard == true ? 120 : 0),
+                width: (_mainSize.width * 0.97),
                 decoration: BoxDecoration(
                     color: widget.isLightMode
                         ? const Color.fromRGBO(249, 249, 249, 1)
@@ -118,16 +123,19 @@ class _ColorPickerTabletState extends State<ColorPickerTablet> {
                 padding: EdgeInsets.only(
                     top: 20, bottom: MediaQuery.of(context).padding.bottom),
                 margin: const EdgeInsets.only(bottom: 5),
-                child: Stack(
+                child: Column(
                   children: [
-                    Column(
-                      children: [
-                        Container(
-                            width: _widthColorBody, child: _buildTitleWidget()),
-                        const SizedBox(height: 20),
-                        _segmentedControl(),
-                        Container(width: _widthColorBody, child: _buildBody()),
-                      ],
+                    SizedBox(
+                      width: _widthColorBody,
+                      child: _buildTitleWidget(),
+                    ),
+                    const SizedBox(height: 20),
+                    _segmentedControl(),
+                    Expanded(
+                      child: SizedBox(
+                        width: _widthColorBody,
+                        child: _buildBody(),
+                      ),
                     ),
                   ],
                 ),
@@ -144,12 +152,12 @@ class _ColorPickerTabletState extends State<ColorPickerTablet> {
                   },
                 ),
               Container(
-                  height: widget.height + (_showKeyBoard == true ? 120 : 0),
+                  height: 600 + (_showKeyBoard == true ? 120 : 0),
                   width: _widthColorBody,
                   margin: const EdgeInsets.only(bottom: 5),
                   padding: const EdgeInsets.only(top: 20),
                   child: _buildTextFieldAndButtons()),
-              if (_showKeyBoard == true) _buildKeyBoard(),
+              _buildKeyBoard(_showKeyBoard == true),
             ],
           ),
         ],
@@ -263,7 +271,7 @@ class _ColorPickerTabletState extends State<ColorPickerTablet> {
     );
   }
 
-  Widget _buildKeyBoard() {
+  Widget _buildKeyBoard(bool showKeyBoard) {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Column(
@@ -272,6 +280,8 @@ class _ColorPickerTabletState extends State<ColorPickerTablet> {
         children: [
           // 576ABC890
           CustomKeyboardWidget(
+            showKeyBoard: showKeyBoard,
+            width: _mainSize.width,
             isLightMode: widget.isLightMode,
             onEnter: (value) {
               _insertText(value);
@@ -344,8 +354,8 @@ class _ColorPickerTabletState extends State<ColorPickerTablet> {
                     onTap: () {
                       setState(() {
                         _showKeyBoard = true;
-                        final renderBoxTextField = _keyTextField.currentContext
-                            ?.findRenderObject() as RenderBox;
+                        _keyTextField.currentContext?.findRenderObject()
+                            as RenderBox;
                       });
                     },
                     onChanged: (value) {
@@ -515,27 +525,32 @@ class _ColorPickerTabletState extends State<ColorPickerTablet> {
     switch (_indexSegment) {
       case 0:
         return BodyPalette(
-            currentColor: _selectedColor,
-            onColorChange: _onColorChange,
-            isLightMode: widget.isLightMode);
+          currentColor: _selectedColor,
+          onColorChange: _onColorChange,
+          isLightMode: widget.isLightMode,
+          width: _widthColorBody,
+        );
       case 1:
         return BodyHSB(
-            currentColor: _selectedColor,
-            onColorChange: _onColorChange,
-            isLightMode: widget.isLightMode,
-            isShowKeyboard: _showKeyBoard);
+          currentColor: _selectedColor,
+          onColorChange: _onColorChange,
+          isLightMode: widget.isLightMode,
+          isShowKeyboard: _showKeyBoard,
+        );
       case 2:
         return BodyPicker(
-            currentColor: _selectedColor,
-            onColorChange: _onColorChange,
-            isLightMode: widget.isLightMode,
-            isShowKeyboard: _showKeyBoard);
+          currentColor: _selectedColor,
+          onColorChange: _onColorChange,
+          isLightMode: widget.isLightMode,
+          isShowKeyboard: _showKeyBoard,
+        );
       case 3:
         return BodySaved(
-            currentColor: _selectedColor,
-            listColorSaved: _listColorSaved,
-            onColorChange: _onColorChange,
-            isLightMode: widget.isLightMode);
+          currentColor: _selectedColor,
+          listColorSaved: _listColorSaved,
+          onColorChange: _onColorChange,
+          isLightMode: widget.isLightMode,
+        );
       default:
         return const SizedBox();
     }

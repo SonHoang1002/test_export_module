@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:color_picker_android/commons/colors.dart';
-import 'package:color_picker_android/commons/constant.dart';
+import 'package:color_picker_android/commons/constants.dart';
 import 'package:color_picker_android/helpers/contain_offset.dart';
 import 'package:color_picker_android/widgets/w_slider_color.dart';
 import 'package:color_picker_android/widgets/w_text_content.dart';
@@ -264,15 +264,6 @@ class _BodyPickerState extends State<BodyHSB> {
         ],
       ),
     );
-  }
-
-  _check() {
-    if (_hsbBrightness == 0) {
-      return colorBlack;
-    }
-    if (_hsbSaturation == 0) {
-      return colorWhite;
-    }
   }
 
   Widget _buildPreviewColor() {

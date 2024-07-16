@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:color_picker_android/commons/colors.dart';
-import 'package:color_picker_android/commons/constant.dart';
+import 'package:color_picker_android/commons/constants.dart';
 import 'package:color_picker_android/helpers/contain_offset.dart';
 import 'package:color_picker_android/widgets/w_slider_color.dart';
 import 'package:flutter/material.dart';

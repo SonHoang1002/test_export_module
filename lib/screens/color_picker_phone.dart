@@ -17,36 +17,40 @@ class ColorPickerPhone extends StatefulWidget {
   final Color currentColor;
 
   /// call on click to done button
-  final Function(Color color) onDone;
+  final void Function(Color color) onDone;
 
   /// call on click to save button
-  final Function(Color color)? onColorSave;
+  final void Function(Color color)? onColorSave;
+
+  /// call on drag to change color
+  final void Function(Color color)? onColorChange;
 
   /// color list to render for save tab
   final List<Color> listColorSaved;
 
   /// change theme of input, button, segment controls,
   final Color? topicColor;
-
   final Color? colorIconSave;
-
   final Color? colorIconCheck;
-
   final Color? barrierColor;
+  final Color? backgroundColor;
   final bool isLightMode;
 
   const ColorPickerPhone({
     super.key,
     required this.currentColor,
-    required this.onDone,
     required this.listColorSaved,
     required this.isLightMode,
-    this.onColorSave,
+    required this.onDone,
     this.topicColor,
     this.colorIconSave,
     this.colorIconCheck,
     this.barrierColor,
+    this.backgroundColor,
+    this.onColorSave,
+    this.onColorChange,
   });
+
   @override
   State<ColorPickerPhone> createState() => _ColorPickerPhoneState();
 }
@@ -65,13 +69,6 @@ class _ColorPickerPhoneState extends State<ColorPickerPhone> {
   List<Color> _listColorSaved = [];
   int _maxLengthInput = 7;
   bool _isValid = true;
-  void _onColorChange(Color color) {
-    _unFocusKeyBoard();
-    setState(() {
-      _selectedColor = color;
-      _hexController.text = convertColorToHexString(_selectedColor);
-    });
-  }
 
   @override
   void initState() {
@@ -81,84 +78,23 @@ class _ColorPickerPhoneState extends State<ColorPickerPhone> {
     _hexController.text = convertColorToHexString(_selectedColor);
   }
 
-  @override
-  Widget build(BuildContext context) {
-    _size = MediaQuery.of(context).size;
-    _widthColorBody = _size.width * 0.85;
-    _isSaved = _listColorSaved.contains(_selectedColor);
-    _isValid = checkHexString(_hexController.text.trim());
-
-    return Container(
-      height: double.infinity,
-      width: double.infinity,
-      color: transparent,
-      child: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
-          Positioned.fill(child: GestureDetector(
-            onTap: () {
-              popNavigator(context);
-            },
-          )),
-          Stack(
-            alignment: Alignment.bottomCenter,
-            children: [
-              Container(
-                height: 520 + (_showKeyBoard == true ? 120 : 0),
-                width: _size.width * 0.97,
-                decoration: BoxDecoration(
-                    color: widget.isLightMode
-                        ? const Color.fromRGBO(249, 249, 249, 1)
-                        : const Color.fromRGBO(29, 29, 29, 1),
-                    borderRadius: BorderRadius.circular(20)),
-                padding: EdgeInsets.only(
-                    top: 20, bottom: MediaQuery.of(context).padding.bottom),
-                margin: const EdgeInsets.only(bottom: 5),
-                child: Stack(
-                  children: [
-                    Column(
-                      children: [
-                        _buildTitleWidget(),
-                        const SizedBox(height: 20),
-                        _segmentedControl(),
-                        _buildBody(),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              if (_showKeyBoard == true)
-                GestureDetector(
-                  onTap: () {
-                    _updateCurrentColor();
-                    _disableKeyBoard();
-                  },
-                  onPanStart: (details) {
-                    _updateCurrentColor();
-                    _disableKeyBoard();
-                  },
-                ),
-              Container(
-                  height: 520 + (_showKeyBoard == true ? 120 : 0),
-                  width: _size.width * 0.9,
-                  margin: const EdgeInsets.only(bottom: 5),
-                  padding: const EdgeInsets.only(top: 20),
-                  child: _buildTextFieldAndButtons()),
-              if (_showKeyBoard == true) _buildKeyBoard(),
-            ],
-          ),
-        ],
-      ),
-    );
+  void _onColorChange(Color color) {
+    _unFocusKeyBoard();
+    _selectedColor = color;
+    _hexController.text = convertColorToHexString(_selectedColor);
+    if (widget.onColorChange != null) {
+      widget.onColorChange!(_selectedColor);
+    }
+    setState(() {});
   }
 
-  void _disableKeyBoard() {
+  void _handleDisableKeyBoard() {
     _showKeyBoard = null;
     _unFocusKeyBoard();
     setState(() {});
   }
 
-  void _updateCurrentColor() {
+  void _handleUpdateCurrentColor() {
     final lengthOfHexController = _hexController.text.trim().length;
     if (lengthOfHexController < 7) {
       for (int i = 0; i < 7 - lengthOfHexController; i++) {
@@ -258,40 +194,111 @@ class _ColorPickerPhoneState extends State<ColorPickerPhone> {
     );
   }
 
-  Widget _buildKeyBoard() {
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.end,
+  late bool isDarkMode;
+  @override
+  Widget build(BuildContext context) {
+    _size = MediaQuery.of(context).size;
+    _widthColorBody = _size.width * 0.85;
+    _isSaved = _listColorSaved.contains(_selectedColor);
+    _isValid = checkHexString(_hexController.text.trim());
+    isDarkMode = !widget.isLightMode;
+
+    return Container(
+      height: double.infinity,
+      width: double.infinity,
+      color: transparent,
+      child: Stack(
+        alignment: Alignment.bottomCenter,
         children: [
-          // 576ABC890
-          CustomKeyboardWidget(
-            isLightMode: widget.isLightMode,
-            onEnter: (value) {
-              _insertText(value);
-              if (_hexController.text.trim().length > _maxLengthInput - 1) {
-                final newText =
-                    _hexController.text.trim().substring(0, _maxLengthInput);
-                if (checkHexString(newText)) {
-                  _selectedColor = convertHexStringToColor(newText);
-                }
-                _hexController.text = newText;
-                _disableKeyBoard();
-                return;
-              }
-              setState(() {});
-            },
-            onBackSpace: () {
-              _backspace();
-              setState(() {});
-            },
-            onDone: () {
-              _updateCurrentColor();
-              _disableKeyBoard();
-            },
+          _buildBackground(),
+          Stack(
+            alignment: Alignment.bottomCenter,
+            children: [
+              Container(
+                height: 520 + (_showKeyBoard == true ? 120 : 0),
+                width: _size.width * 0.97,
+                decoration: BoxDecoration(
+                  color: widget.backgroundColor ??
+                      (widget.isLightMode
+                          ? const Color.fromRGBO(249, 249, 249, 1)
+                          : const Color.fromRGBO(29, 29, 29, 1)),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                padding: EdgeInsets.only(
+                  top: 20,
+                  bottom: MediaQuery.of(context).padding.bottom,
+                ),
+                margin: const EdgeInsets.only(bottom: 5),
+                child: Stack(
+                  children: [
+                    Column(
+                      children: [
+                        _buildTitleWidget(),
+                        const SizedBox(height: 20),
+                        _buildSegmentedControl(),
+                        Expanded(
+                          child: _buildBody(),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              if (_showKeyBoard == true)
+                GestureDetector(
+                  onTap: () {
+                    _handleUpdateCurrentColor();
+                    _handleDisableKeyBoard();
+                  },
+                  onPanStart: (details) {
+                    _handleUpdateCurrentColor();
+                    _handleDisableKeyBoard();
+                  },
+                ),
+              Container(
+                height: 520 + (_showKeyBoard == true ? 120 : 0),
+                width: _size.width * 0.9,
+                margin: const EdgeInsets.only(bottom: 5),
+                padding: const EdgeInsets.only(top: 20),
+                child: _buildTextFieldAndButtons(),
+              ),
+              _buildKeyBoard(_showKeyBoard == true),
+            ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildKeyBoard(bool showKeyBoard) {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: CustomKeyboardWidget(
+        showKeyBoard: showKeyBoard,
+        width: _size.width,
+        isLightMode: widget.isLightMode,
+        onEnter: (value) {
+          _insertText(value);
+          if (_hexController.text.trim().length > _maxLengthInput - 1) {
+            final newText =
+                _hexController.text.trim().substring(0, _maxLengthInput);
+            if (checkHexString(newText)) {
+              _selectedColor = convertHexStringToColor(newText);
+            }
+            _hexController.text = newText;
+            _handleDisableKeyBoard();
+            return;
+          }
+          setState(() {});
+        },
+        onBackSpace: () {
+          _backspace();
+          setState(() {});
+        },
+        onDone: () {
+          _handleUpdateCurrentColor();
+          _handleDisableKeyBoard();
+        },
       ),
     );
   }
@@ -331,16 +338,15 @@ class _ColorPickerPhoneState extends State<ColorPickerPhone> {
                   height: 30,
                   width: 80,
                   decoration: BoxDecoration(
-                      color: widget.isLightMode ? black005 : white01,
-                      border:
-                          Border.all(color: _isValid ? transparent : colorRed),
-                      borderRadius: BorderRadius.circular(6.5)),
+                    color: widget.isLightMode ? black005 : white01,
+                    border:
+                        Border.all(color: _isValid ? transparent : colorRed),
+                    borderRadius: BorderRadius.circular(6.5),
+                  ),
                   child: TextField(
                     onTap: () {
                       setState(() {
                         _showKeyBoard = true;
-                        final renderBoxTextField = _keyTextField.currentContext
-                            ?.findRenderObject() as RenderBox;
                       });
                     },
                     onChanged: (value) {
@@ -354,7 +360,7 @@ class _ColorPickerPhoneState extends State<ColorPickerPhone> {
                       _hexController.text = newValue;
                       _isValid = checkHexString(newValue);
                       if (_isValid) {
-                        _updateCurrentColor();
+                        _handleUpdateCurrentColor();
                       }
                       setState(() {});
                     },
@@ -371,10 +377,7 @@ class _ColorPickerPhoneState extends State<ColorPickerPhone> {
                         counterText: "",
                         contentPadding: EdgeInsets.only(bottom: 17)),
                   )),
-
-              const SizedBox(
-                width: 7,
-              ),
+              const SizedBox(width: 7),
               // save button
               GestureDetector(
                 onTap: () {
@@ -388,61 +391,64 @@ class _ColorPickerPhoneState extends State<ColorPickerPhone> {
                       ...List.from(_listColorSaved)
                     ];
                   }
-                  _disableKeyBoard();
+                  _handleDisableKeyBoard();
                   setState(() {});
                   widget.onColorSave != null
                       ? widget.onColorSave!(_selectedColor)
                       : null;
                 },
                 child: Container(
-                    width: 30,
-                    height: 30,
-                    padding: const EdgeInsets.all(7),
-                    decoration: BoxDecoration(
-                        color: widget.topicColor ??
-                            (widget.isLightMode ? black005 : white005),
-                        borderRadius: BorderRadius.circular(6.5)),
-                    child: Icon(
-                      _isSaved
-                          ? FontAwesomeIcons.solidBookmark
-                          : FontAwesomeIcons.bookmark,
-                      size: 15,
-                      color: widget.colorIconSave ??
-                          (widget.isLightMode
-                              ? black07
-                              : _isSaved
-                                  ? white1
-                                  : white07),
-                    )),
+                  width: 30,
+                  height: 30,
+                  padding: const EdgeInsets.all(7),
+                  decoration: BoxDecoration(
+                      color: widget.topicColor ??
+                          (widget.isLightMode ? black005 : white005),
+                      borderRadius: BorderRadius.circular(6.5)),
+                  child: Icon(
+                    _isSaved
+                        ? FontAwesomeIcons.solidBookmark
+                        : FontAwesomeIcons.bookmark,
+                    size: 15,
+                    color: widget.colorIconSave ??
+                        (widget.isLightMode
+                            ? black07
+                            : _isSaved
+                                ? white1
+                                : white07),
+                  ),
+                ),
               ),
             ],
           ),
           GestureDetector(
             onTap: () {
-              _disableKeyBoard();
+              _handleDisableKeyBoard();
               widget.onDone(_selectedColor);
             },
             child: Container(
-                width: 30,
-                height: 30,
-                padding: const EdgeInsets.all(7),
-                decoration: BoxDecoration(
-                    color: widget.topicColor ??
-                        (widget.isLightMode ? black005 : white005),
-                    borderRadius: BorderRadius.circular(20)),
-                child: Icon(
-                  FontAwesomeIcons.check,
-                  size: 15,
-                  color: widget.colorIconSave ??
-                      (widget.isLightMode ? black07 : white07),
-                )),
+              width: 30,
+              height: 30,
+              padding: const EdgeInsets.all(7),
+              decoration: BoxDecoration(
+                color: widget.topicColor ??
+                    (widget.isLightMode ? black005 : white005),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Icon(
+                FontAwesomeIcons.check,
+                size: 15,
+                color: widget.colorIconSave ??
+                    (widget.isLightMode ? black07 : white07),
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _segmentedControl() {
+  Widget _buildSegmentedControl() {
     return SizedBox(
       width: _widthColorBody,
       height: 36,
@@ -510,27 +516,32 @@ class _ColorPickerPhoneState extends State<ColorPickerPhone> {
     switch (_indexSegment) {
       case 0:
         return BodyPalette(
-            currentColor: _selectedColor,
-            onColorChange: _onColorChange,
-            isLightMode: widget.isLightMode);
+          currentColor: _selectedColor,
+          onColorChange: _onColorChange,
+          isLightMode: widget.isLightMode,
+          width: _widthColorBody,
+        );
       case 1:
         return BodyHSB(
-            currentColor: _selectedColor,
-            onColorChange: _onColorChange,
-            isLightMode: widget.isLightMode,
-            isShowKeyboard: _showKeyBoard);
+          currentColor: _selectedColor,
+          onColorChange: _onColorChange,
+          isLightMode: widget.isLightMode,
+          isShowKeyboard: _showKeyBoard,
+        );
       case 2:
         return BodyPicker(
-            currentColor: _selectedColor,
-            onColorChange: _onColorChange,
-            isLightMode: widget.isLightMode,
-            isShowKeyboard: _showKeyBoard);
+          currentColor: _selectedColor,
+          onColorChange: _onColorChange,
+          isLightMode: widget.isLightMode,
+          isShowKeyboard: _showKeyBoard,
+        );
       case 3:
         return BodySaved(
-            currentColor: _selectedColor,
-            listColorSaved: _listColorSaved,
-            onColorChange: _onColorChange,
-            isLightMode: widget.isLightMode);
+          currentColor: _selectedColor,
+          listColorSaved: _listColorSaved,
+          onColorChange: _onColorChange,
+          isLightMode: widget.isLightMode,
+        );
       default:
         return const SizedBox();
     }
@@ -550,5 +561,15 @@ class _ColorPickerPhoneState extends State<ColorPickerPhone> {
         return white05;
       }
     }
+  }
+
+  Widget _buildBackground() {
+    return Positioned.fill(
+      child: GestureDetector(
+        onTap: () {
+          popNavigator(context);
+        },
+      ),
+    );
   }
 }

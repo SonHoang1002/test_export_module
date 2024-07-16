@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// ignore: non_constant_identifier_names
 final List<Color> COLOR_SLIDERS = [
   const HSVColor.fromAHSV(1.0, 0.0, 1.0, 1.0).toColor(),
   const HSVColor.fromAHSV(1.0, 30.0, 1.0, 1.0).toColor(),
@@ -16,6 +17,7 @@ final List<Color> COLOR_SLIDERS = [
   const HSVColor.fromAHSV(1.0, 360.0, 1.0, 1.0).toColor(),
 ];
 
+// ignore: constant_identifier_names
 const List<Color> ALL_COLORS = [
   Colors.amber,
   Colors.amberAccent,
@@ -56,6 +58,7 @@ const List<Color> ALL_COLORS = [
   Colors.white,
 ];
 
+// ignore: constant_identifier_names
 const List<Color> COLORS_PALETTE = [
   Color(0xFFFFFFFF),
   Color(0xFFEBEBEB),
@@ -179,10 +182,18 @@ const List<Color> COLORS_PALETTE = [
   Color(0xFFDEEDD5),
 ];
 
+// ignore: constant_identifier_names
 const String PATH_PREFFIX_ICON = 'lib/assets/icons/';
+// ignore: constant_identifier_names
 const List<String> KEYBOARD_ROW_1 = ["7", "8", "9", "A", "B", "C"];
+// ignore: constant_identifier_names
 const List<String> KEYBOARD_ROW_2 = ["4", "5", "6", "D", "E", "F"];
-const List<String> KEYBOARD_ROW_31 = ["1", "2", "3"]; 
+// ignore: constant_identifier_names
+const List<String> KEYBOARD_ROW_31 = ["1", "2", "3"];
+// ignore: constant_identifier_names
 const double HEIGHT_OF_KEYBOARD = 300;
 
+// ignore: constant_identifier_names
 const String PREFERENCE_SAVED_COLOR_KEY = "saved_color";
+// ignore: constant_identifier_names
+const Curve CUBIC_CURVE = Cubic(0.25, 0, 0, 1);
