@@ -30,7 +30,6 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
   final String title;
-
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
@@ -95,10 +94,24 @@ class _MyHomePageState extends State<MyHomePage> {
                       await prefs.setStringList(PREFERENCE_SAVED_COLOR_KEY,
                           listSavedColor.map((e) => e.toString()).toList());
                     },
+                    // titleWidgetLeft: Container(
+                    //   height: 30,
+                    //   width: 80,
+                    //   color: colorRed,
+                    //   margin: const EdgeInsets.only(right: 10),
+                    // ),
+                    // titleWidgetRight: Container(
+                    //   height: 30,
+                    //   width: 80,
+                    //   color: colorBlue, 
+                    // ),
+                    // isHaveTitle: false,
                   );
                 },
                 backgroundColor: transparent,
                 isScrollControlled: true,
+                enableDrag: true,
+                barrierColor: transparent,
               );
             },
           ),

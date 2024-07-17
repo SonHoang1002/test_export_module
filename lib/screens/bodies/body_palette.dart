@@ -10,12 +10,14 @@ class BodyPalette extends StatefulWidget {
   final bool isLightMode;
   final Function(Color color) onColorChange;
   final double width;
+  final bool isFocus;
   const BodyPalette({
     super.key,
     required this.currentColor,
     required this.onColorChange,
     required this.isLightMode,
     required this.width,
+    required this.isFocus,
   });
 
   @override
@@ -107,68 +109,73 @@ class _BodyPaletteState extends State<BodyPalette> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, constr) {
-       
-      _widthColorBody = widget.width;
-      _sizeOfColorItem = _widthColorBody / 12;
-      _selectedColor = widget.currentColor;
-      return Container(
-        margin: const EdgeInsets.only(top: 30),
-        child: GestureDetector(
-          onPanStart: (details) {
-            _checkInside(details.globalPosition);
-          },
-          onPanUpdate: (details) {
-            _updatePositionAndSelectedColor(details.globalPosition);
-          },
-          onPanEnd: (details) {
-            _disableInside();
-          },
-          child: Container(
-            key: _keyColorBoard,
-            height: _sizeOfColorItem * _rowOfColorBoard,
-            width: _sizeOfColorItem * _columnOfColorBoard,
-            decoration: BoxDecoration(
-              border: Border.all(width: 0.2, color: colorBlack),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: GridView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 12,
-              ),
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _selectedColor = COLORS_PALETTE[index];
-                      });
-                      widget.onColorChange(_selectedColor);
-                    },
-                    child: Container(
-                      height: _sizeOfColorItem,
-                      width: _sizeOfColorItem,
-                      decoration: BoxDecoration(
-                        color: COLORS_PALETTE[index],
-                        borderRadius: _renderBorderRadius(index),
-                        border: Border.all(
-                          width: 2,
-                          color: _selectedColor == COLORS_PALETTE[index]
-                              ? _checkInsideArea(index, [0, 0])
-                                  ? colorBlack
-                                  : colorWhite
-                              : transparent,
-                        ),
-                      ),
-                    ));
+    return Container( 
+      alignment: Alignment.topCenter,
+      margin: const EdgeInsets.only(top: 30),
+      child: AnimatedOpacity(
+        opacity: widget.isFocus ? 1 : 0,
+        duration: DURATION_ANIMATED,
+        child: IgnorePointer(
+          ignoring: !widget.isFocus,
+          child: LayoutBuilder(builder: (context, constr) {
+            _widthColorBody = widget.width;
+            _sizeOfColorItem = _widthColorBody / 12;
+            _selectedColor = widget.currentColor;
+            return GestureDetector(
+              onPanStart: (details) {
+                _checkInside(details.globalPosition);
               },
-              itemCount: COLORS_PALETTE.length,
-            ),
-          ),
+              onPanUpdate: (details) {
+                _updatePositionAndSelectedColor(details.globalPosition);
+              },
+              onPanEnd: (details) {
+                _disableInside();
+              },
+              child: Container(
+                key: _keyColorBoard,
+                height: _sizeOfColorItem * _rowOfColorBoard,
+                width: _sizeOfColorItem * _columnOfColorBoard,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: GridView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: _columnOfColorBoard,
+                  ),
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _selectedColor = COLORS_PALETTE[index];
+                          });
+                          widget.onColorChange(_selectedColor);
+                        },
+                        child: Container(
+                          height: _sizeOfColorItem,
+                          width: _sizeOfColorItem,
+                          decoration: BoxDecoration(
+                            color: COLORS_PALETTE[index],
+                            borderRadius: _renderBorderRadius(index),
+                            border: Border.all(
+                              width: 2,
+                              color: _selectedColor == COLORS_PALETTE[index]
+                                  ? _checkInsideArea(index, [0, 0])
+                                      ? colorBlack
+                                      : colorWhite
+                                  : transparent,
+                            ),
+                          ),
+                        ));
+                  },
+                  itemCount: COLORS_PALETTE.length,
+                ),
+              ),
+            );
+          }),
         ),
-      );
-    });
+      ),
+    );
   }
 
   BorderRadius? _renderBorderRadius(int index) {

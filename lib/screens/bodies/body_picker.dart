@@ -11,12 +11,15 @@ class BodyPicker extends StatefulWidget {
   final bool isLightMode;
   final Function(Color color) onColorChange;
   final bool? isShowKeyboard;
+  final bool isFocus;
+
   const BodyPicker(
       {super.key,
       required this.currentColor,
       required this.onColorChange,
       required this.isLightMode,
-      this.isShowKeyboard});
+      this.isShowKeyboard,
+      required this.isFocus});
 
   @override
   State<BodyPicker> createState() => _BodyPickerState();
@@ -186,77 +189,86 @@ class _BodyPickerState extends State<BodyPicker> {
       _hsvValue = hsvColor.value;
       _changePositionWithHSVColor(hsvColor);
     }
-    return Container(
-      margin: const EdgeInsets.only(top: 20),
-      child: GestureDetector(
-        onTapDown: (details) {
-          if (widget.isShowKeyboard == true) {
-            return;
-          }
-          _onPanning = true;
-          _checkInside(details.globalPosition);
-          _updatePositionAndHSVProperty(details.globalPosition);
-        },
-        onPanUpdate: (details) {
-          _onPanning = true;
-          _updatePositionAndHSVProperty(details.globalPosition);
-        },
-        onPanEnd: (details) {
-          _disableInside();
-        },
-        onTapUp: (details) {
-          _disableInside();
-        },
-        onPanStart: (details) {
-          if (widget.isShowKeyboard == true) {
-            return;
-          }
-          _onPanning = true;
-          _checkInside(details.globalPosition);
-        },
-        child: Container(
-          width: _size.width,
-          margin: const EdgeInsets.only(bottom: 20),
-          child: Column(children: [
-            Stack(
-              children: [
-                Padding(
-                  padding: EdgeInsets.all(_dotSize / 2),
-                  child: SizedBox(
-                    key: _keyHSVBoard,
-                    height: _size.height * 0.3,
-                    width: _widthColorBody,
-                    child: Stack(
-                      children: [
-                        // S from left to right
-                        _buildSaturationBox(),
-                        // value from bottom to top
-                        _buildValueBox(),
-                      ],
-                    ),
+    return AnimatedOpacity(
+      opacity: widget.isFocus ? 1 : 0,
+      duration: DURATION_ANIMATED,
+      child: IgnorePointer(
+        ignoring: !widget.isFocus,
+        child: Center(
+          child: Container(
+            margin: const EdgeInsets.only(top: 20),
+            child: GestureDetector(
+              onTapDown: (details) {
+                if (widget.isShowKeyboard == true) {
+                  return;
+                }
+                _onPanning = true;
+                _checkInside(details.globalPosition);
+                _updatePositionAndHSVProperty(details.globalPosition);
+              },
+              onPanUpdate: (details) {
+                _onPanning = true;
+                _updatePositionAndHSVProperty(details.globalPosition);
+              },
+              onPanEnd: (details) {
+                _disableInside();
+              },
+              onTapUp: (details) {
+                _disableInside();
+              },
+              onPanStart: (details) {
+                if (widget.isShowKeyboard == true) {
+                  return;
+                }
+                _onPanning = true;
+                _checkInside(details.globalPosition);
+              },
+              child: Container(
+                width: _size.width,
+                margin: const EdgeInsets.only(bottom: 20),
+                child: Column(children: [
+                  Stack(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(_dotSize / 2),
+                        child: SizedBox(
+                          key: _keyHSVBoard,
+                          height: _size.height * 0.3,
+                          width: _widthColorBody,
+                          child: Stack(
+                            children: [
+                              // S from left to right
+                              _buildSaturationBox(),
+                              // value from bottom to top
+                              _buildValueBox(),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                          left: _offsetDotHSV.dx,
+                          top: _offsetDotHSV.dy,
+                          child: _buildDot(
+                              HSVColor.fromAHSV(_hsvAlpha, _hsvHue,
+                                      _hsvSaturation, _hsvValue)
+                                  .toColor(),
+                              borderWidth: 3,
+                              borderColor: _renderBorderColor())),
+                    ],
                   ),
-                ),
-                Positioned(
-                    left: _offsetDotHSV.dx,
-                    top: _offsetDotHSV.dy,
-                    child: _buildDot(
-                        HSVColor.fromAHSV(
-                                _hsvAlpha, _hsvHue, _hsvSaturation, _hsvValue)
-                            .toColor(),
-                        borderWidth: 3,
-                        borderColor: _renderBorderColor())),
-              ],
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  SliderColor(
+                      key: _keySlider,
+                      dotSize: _dotSize,
+                      listGradientColor: COLOR_SLIDERS,
+                      offsetTracker: _offsetTrackerCursor,
+                      sliderWidth: _widthColorBody),
+                ]),
+              ),
             ),
-            const SizedBox(
-              height: 10,
-            ),
-            SliderColor(
-                key: _keySlider,
-                dotSize: _dotSize,
-                listGradientColor: COLOR_SLIDERS,
-                offsetTracker: _offsetTrackerCursor,
-                sliderWidth: _widthColorBody),
-          ]),
+          ),
         ),
       ),
     );

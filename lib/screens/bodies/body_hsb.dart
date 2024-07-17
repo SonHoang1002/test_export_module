@@ -12,12 +12,15 @@ class BodyHSB extends StatefulWidget {
   final bool isLightMode;
   final Function(Color color) onColorChange;
   final bool? isShowKeyboard;
-  const BodyHSB(
-      {super.key,
-      required this.currentColor,
-      required this.onColorChange,
-      required this.isLightMode,
-      this.isShowKeyboard});
+  final bool isFocus;
+  const BodyHSB({
+    super.key,
+    required this.currentColor,
+    required this.onColorChange,
+    required this.isLightMode,
+    this.isShowKeyboard,
+    required this.isFocus,
+  });
 
   @override
   State<BodyHSB> createState() => _BodyPickerState();
@@ -201,67 +204,78 @@ class _BodyPickerState extends State<BodyHSB> {
 
       _changePositionWithHSVColor(initHsbColor);
     }
-    return GestureDetector(
-      onPanStart: (details) {
-        if (widget.isShowKeyboard == true) {
-          return;
-        }
-        _onPanning = true;
-        _checkInside(details.globalPosition);
-      },
-      onPanUpdate: (details) {
-        _onPanning = true;
-        _updatePositionAndHSBProperties(details.globalPosition);
-      },
-      onPanEnd: (details) {
-        _disableInside();
-      },
-      onTapUp: (details) {
-        _disableInside();
-      },
-      onTapDown: (details) {
-        if (widget.isShowKeyboard == true) {
-          return;
-        }
-        _onPanning = true;
-        _checkInside(details.globalPosition);
-        _updatePositionAndHSBProperties(details.globalPosition);
-      },
-      child: Column(
-        children: [
-          // hue widget
-          _buildTitle("Hue", _hsbHue.toStringAsFixed(0)), // °
-          SliderColor(
-              key: _keyHue,
-              dotSize: _dotSize,
-              listGradientColor: COLOR_SLIDERS,
-              offsetTracker: _offsetTrackerHue,
-              sliderWidth: _widthColorBody),
-          // saturation widget
-          _buildTitle("Saturation", (_hsbSaturation * 100).toStringAsFixed(0)),
-          SliderColor(
-              key: _keySaturation,
-              dotSize: _dotSize,
-              listGradientColor: [
-                const Color.fromRGBO(216, 216, 216, 1),
-                HSVColor.fromAHSV(1, _hsbHue, 1, 1).toColor()
-                // HSVColor.fromAHSV(1, _hsbHue, _hsbSaturation, _hsbBrightness).toColor()
+    return AnimatedOpacity(
+      opacity: widget.isFocus ? 1 : 0,
+      duration: DURATION_ANIMATED,
+      child: IgnorePointer(
+        ignoring: !widget.isFocus,
+        child: Center(
+          child: GestureDetector(
+            onPanStart: (details) {
+              if (widget.isShowKeyboard == true) {
+                return;
+              }
+              _onPanning = true;
+              _checkInside(details.globalPosition);
+            },
+            onPanUpdate: (details) {
+              _onPanning = true;
+              _updatePositionAndHSBProperties(details.globalPosition);
+            },
+            onPanEnd: (details) {
+              _disableInside();
+            },
+            onTapUp: (details) {
+              _disableInside();
+            },
+            onTapDown: (details) {
+              if (widget.isShowKeyboard == true) {
+                return;
+              }
+              _onPanning = true;
+              _checkInside(details.globalPosition);
+              _updatePositionAndHSBProperties(details.globalPosition);
+            },
+            child: Column(
+              children: [
+                // hue widget
+                _buildTitle("Hue", _hsbHue.toStringAsFixed(0)), // °
+                SliderColor(
+                    key: _keyHue,
+                    dotSize: _dotSize,
+                    listGradientColor: COLOR_SLIDERS,
+                    offsetTracker: _offsetTrackerHue,
+                    sliderWidth: _widthColorBody),
+                // saturation widget
+                _buildTitle(
+                    "Saturation", (_hsbSaturation * 100).toStringAsFixed(0)),
+                SliderColor(
+                    key: _keySaturation,
+                    dotSize: _dotSize,
+                    listGradientColor: [
+                      const Color.fromRGBO(216, 216, 216, 1),
+                      HSVColor.fromAHSV(1, _hsbHue, 1, 1).toColor()
+                      // HSVColor.fromAHSV(1, _hsbHue, _hsbSaturation, _hsbBrightness).toColor()
+                    ],
+                    offsetTracker: _offsetTrackerSaturation,
+                    sliderWidth: _widthColorBody),
+                // brightness widget
+                _buildTitle(
+                    "Brightness", (_hsbBrightness * 100).toStringAsFixed(0)),
+                SliderColor(
+                    key: _keyBrightness,
+                    dotSize: _dotSize,
+                    listGradientColor: [
+                      colorBlack,
+                      HSVColor.fromAHSV(1, _hsbHue, 1, 1).toColor()
+                    ],
+                    offsetTracker: _offsetTrackerBrightness,
+                    sliderWidth: _widthColorBody),
+                _buildPreviewColor()
               ],
-              offsetTracker: _offsetTrackerSaturation,
-              sliderWidth: _widthColorBody),
-          // brightness widget
-          _buildTitle("Brightness", (_hsbBrightness * 100).toStringAsFixed(0)),
-          SliderColor(
-              key: _keyBrightness,
-              dotSize: _dotSize,
-              listGradientColor: [
-                colorBlack,
-                HSVColor.fromAHSV(1, _hsbHue, 1, 1).toColor()
-              ],
-              offsetTracker: _offsetTrackerBrightness,
-              sliderWidth: _widthColorBody),
-          _buildPreviewColor()
-        ],
+            ),
+          ),
+        ),
       ),
     );
   }
