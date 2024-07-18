@@ -64,6 +64,7 @@ class _BodyPickerState extends State<BodyHSB> {
       _hsbHue = initHsbColor.hue;
       _hsbBrightness = initHsbColor.value;
       _hsbSaturation = initHsbColor.saturation;
+      _hsbAlpha = 1;
     } else {
       _hsbAlpha = 0;
       _hsbHue = 0;
@@ -225,15 +226,12 @@ class _BodyPickerState extends State<BodyHSB> {
 
   @override
   Widget build(BuildContext context) {
-     print("body_hsb: $_hsbAlpha,$_hsbHue, $_hsbSaturation, $_hsbBrightness");
-     print("body_hsb: $_offsetTrackerHue, ${_offsetTrackerSaturation}, $_offsetTrackerBrightness");
-
     _size = MediaQuery.sizeOf(context);
     _widthColorBody = _size.width * 0.85;
-    if ([null, transparent].contains(widget.currentColor)) {
-      _hsbAlpha = 0;
-    } else {
+    if (![null, transparent].contains(widget.currentColor)) {
       _hsbAlpha = 1;
+    } else {
+      _hsbAlpha = 0;
     }
     if (!_onPanning) {
       HSVColor? initHsbColor;
@@ -242,8 +240,9 @@ class _BodyPickerState extends State<BodyHSB> {
         _hsbHue = initHsbColor.hue;
         _hsbBrightness = initHsbColor.value;
         _hsbSaturation = initHsbColor.saturation;
-        _hsbAlpha = 1;
+        _changePositionWithHSVColor(initHsbColor);
       } else {
+        _hsbHue = _hsbBrightness = _hsbSaturation = 0.0;
         _changePositionWithHSVColor(HSVCOLOR_TRANPARENT);
       }
     }
