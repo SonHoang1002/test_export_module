@@ -59,7 +59,7 @@ class _BodyPickerState extends State<BodyHSB> {
   void initState() {
     super.initState();
     HSVColor? initHsbColor;
-    if ([null, transparent].contains(widget.currentColor)) {
+    if (![null, transparent].contains(widget.currentColor)) {
       initHsbColor = HSVColor.fromColor(widget.currentColor!);
       _hsbHue = initHsbColor.hue;
       _hsbBrightness = initHsbColor.value;
@@ -225,6 +225,9 @@ class _BodyPickerState extends State<BodyHSB> {
 
   @override
   Widget build(BuildContext context) {
+     print("body_hsb: $_hsbAlpha,$_hsbHue, $_hsbSaturation, $_hsbBrightness");
+     print("body_hsb: $_offsetTrackerHue, ${_offsetTrackerSaturation}, $_offsetTrackerBrightness");
+
     _size = MediaQuery.sizeOf(context);
     _widthColorBody = _size.width * 0.85;
     if ([null, transparent].contains(widget.currentColor)) {
