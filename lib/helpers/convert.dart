@@ -6,7 +6,7 @@ String convertColorToHexString(Color color) {
   if (newHexString.length > 2) {
     result = newHexString.substring(2, newHexString.length);
   } else {
-    result = "00000000";
+    throw Exception("convertColorToHexString error: newHexString length invalid !!");
   }
 
   return '#$result';

@@ -109,7 +109,7 @@ class _BodyPaletteState extends State<BodyPalette> {
 
   @override
   Widget build(BuildContext context) {
-    return Container( 
+    return Container(
       alignment: Alignment.topCenter,
       margin: const EdgeInsets.only(top: 30),
       child: AnimatedOpacity(
@@ -117,34 +117,35 @@ class _BodyPaletteState extends State<BodyPalette> {
         duration: DURATION_ANIMATED,
         child: IgnorePointer(
           ignoring: !widget.isFocus,
-          child: LayoutBuilder(builder: (context, constr) {
-            _widthColorBody = widget.width;
-            _sizeOfColorItem = _widthColorBody / 12;
-            _selectedColor = widget.currentColor;
-            return GestureDetector(
-              onPanStart: (details) {
-                _checkInside(details.globalPosition);
-              },
-              onPanUpdate: (details) {
-                _updatePositionAndSelectedColor(details.globalPosition);
-              },
-              onPanEnd: (details) {
-                _disableInside();
-              },
-              child: Container(
-                key: _keyColorBoard,
-                height: _sizeOfColorItem * _rowOfColorBoard,
-                width: _sizeOfColorItem * _columnOfColorBoard,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: GridView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: _columnOfColorBoard,
+          child: LayoutBuilder(
+            builder: (context, constr) {
+              _widthColorBody = widget.width;
+              _sizeOfColorItem = _widthColorBody / 12;
+              _selectedColor = widget.currentColor;
+              return GestureDetector(
+                onPanStart: (details) {
+                  _checkInside(details.globalPosition);
+                },
+                onPanUpdate: (details) {
+                  _updatePositionAndSelectedColor(details.globalPosition);
+                },
+                onPanEnd: (details) {
+                  _disableInside();
+                },
+                child: Container(
+                  key: _keyColorBoard,
+                  height: _sizeOfColorItem * _rowOfColorBoard,
+                  width: _sizeOfColorItem * _columnOfColorBoard,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(14),
                   ),
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
+                  child: GridView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: _columnOfColorBoard,
+                    ),
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
                         onTap: () {
                           setState(() {
                             _selectedColor = COLORS_PALETTE[index];
@@ -166,13 +167,15 @@ class _BodyPaletteState extends State<BodyPalette> {
                                   : transparent,
                             ),
                           ),
-                        ));
-                  },
-                  itemCount: COLORS_PALETTE.length,
+                        ),
+                      );
+                    },
+                    itemCount: COLORS_PALETTE.length,
+                  ),
                 ),
-              ),
-            );
-          }),
+              );
+            },
+          ),
         ),
       ),
     );

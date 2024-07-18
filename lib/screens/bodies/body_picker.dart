@@ -226,46 +226,51 @@ class _BodyPickerState extends State<BodyPicker> {
               child: Container(
                 width: _size.width,
                 margin: const EdgeInsets.only(bottom: 20),
-                child: Column(children: [
-                  Stack(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.all(_dotSize / 2),
-                        child: SizedBox(
-                          key: _keyHSVBoard,
-                          height: _size.height * 0.3,
-                          width: _widthColorBody,
-                          child: Stack(
-                            children: [
-                              // S from left to right
-                              _buildSaturationBox(),
-                              // value from bottom to top
-                              _buildValueBox(),
-                            ],
+                child: Column(
+                  children: [
+                    Stack(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(_dotSize / 2),
+                          child: SizedBox(
+                            key: _keyHSVBoard,
+                            height: _size.height * 0.3,
+                            width: _widthColorBody,
+                            child: Stack(
+                              children: [
+                                // S from left to right
+                                _buildSaturationBox(),
+                                // value from bottom to top
+                                _buildValueBox(),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      Positioned(
+                        Positioned(
                           left: _offsetDotHSV.dx,
                           top: _offsetDotHSV.dy,
                           child: _buildDot(
-                              HSVColor.fromAHSV(_hsvAlpha, _hsvHue,
-                                      _hsvSaturation, _hsvValue)
-                                  .toColor(),
-                              borderWidth: 3,
-                              borderColor: _renderBorderColor())),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  SliderColor(
+                            HSVColor.fromAHSV(_hsvAlpha, _hsvHue,
+                                    _hsvSaturation, _hsvValue)
+                                .toColor(),
+                            borderWidth: 3,
+                            borderColor: _renderBorderColor(),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    SliderColor(
                       key: _keySlider,
                       dotSize: _dotSize,
                       listGradientColor: COLOR_SLIDERS,
                       offsetTracker: _offsetTrackerCursor,
-                      sliderWidth: _widthColorBody),
-                ]),
+                      sliderWidth: _widthColorBody,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -290,12 +295,16 @@ class _BodyPickerState extends State<BodyPicker> {
   Widget _buildValueBox() {
     return Container(
       foregroundDecoration: BoxDecoration(
-        border: Border.all(color: colorGrey.withOpacity(0.3), width: 0.2),
+        border: Border.all(
+          color: colorGrey.withOpacity(0.3),
+          width: 0.2,
+        ),
         borderRadius: BorderRadius.circular(10),
-        gradient: const LinearGradient(colors: [
-          transparent,
-          colorBlack,
-        ], begin: Alignment.topCenter, end: Alignment.bottomCenter),
+        gradient: const LinearGradient(
+          colors: [transparent, colorBlack],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
       ),
     );
   }
@@ -307,19 +316,21 @@ class _BodyPickerState extends State<BodyPicker> {
       height: _dotSize,
       width: _dotSize,
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(_dotSize / 2),
-          border: Border.all(
-            color: borderColor!,
-            width: borderWidth!,
-          ),
-          boxShadow: const [
-            BoxShadow(
-                color: Color.fromRGBO(0, 0, 0, 0.2),
-                offset: Offset(0, 6),
-                blurRadius: 15,
-                spreadRadius: 0)
-          ],
-          color: backgroundColor),
+        borderRadius: BorderRadius.circular(_dotSize / 2),
+        border: Border.all(
+          color: borderColor!,
+          width: borderWidth!,
+        ),
+        boxShadow: const [
+          BoxShadow(
+            color: Color.fromRGBO(0, 0, 0, 0.2),
+            offset: Offset(0, 6),
+            blurRadius: 15,
+            spreadRadius: 0,
+          )
+        ],
+        color: backgroundColor,
+      ),
     );
   }
 }

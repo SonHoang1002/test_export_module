@@ -12,18 +12,19 @@ class WTextContent extends StatelessWidget {
   int? textMaxLength;
   String? textFontFamily;
   void Function()? onTap;
-  WTextContent(
-      {required this.value,
-      super.key,
-      this.textAlign,
-      this.textColor,
-      this.textFontWeight = FontWeight.w700,
-      this.textLineHeight,
-      this.textSize = 12,
-      this.textOverflow,
-      this.textMaxLength,
-      this.textFontFamily,
-      this.onTap});
+  WTextContent({
+    required this.value,
+    super.key,
+    this.textAlign,
+    this.textColor,
+    this.textFontWeight = FontWeight.w700,
+    this.textLineHeight,
+    this.textSize = 12,
+    this.textOverflow,
+    this.textMaxLength,
+    this.textFontFamily,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -35,16 +36,17 @@ class WTextContent extends StatelessWidget {
               textAlign: textAlign,
               maxLines: textMaxLength,
               style: TextStyle(
-                  fontSize: (textSize! + 1.0),
-                  color:
-                      textColor ?? Theme.of(context).textTheme.bodySmall!.color,
-                  decoration: TextDecoration.none,
-                  fontWeight: textFontWeight,
-                  // fontFamily: MY_CUSTOM_FONT,
-                  overflow: textOverflow,
-                  height: textLineHeight != null && textSize != null
-                      ? (textLineHeight! / textSize!)
-                      : null),
+                fontSize: (textSize! + 1.0),
+                color:
+                    textColor ?? Theme.of(context).textTheme.bodySmall!.color,
+                decoration: TextDecoration.none,
+                fontWeight: textFontWeight,
+                // fontFamily: MY_CUSTOM_FONT,
+                overflow: textOverflow,
+                height: textLineHeight != null && textSize != null
+                    ? (textLineHeight! / textSize!)
+                    : null,
+              ),
             ),
           )
         : Text(

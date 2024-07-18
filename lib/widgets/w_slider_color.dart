@@ -39,10 +39,11 @@ class SliderColor extends StatelessWidget {
                 borderRadius: BorderRadius.circular(dotSize / 2),
                 boxShadow: const [
                   BoxShadow(
-                      color: Color.fromRGBO(0, 0, 0, 0.1),
-                      offset: Offset(0, 2),
-                      blurRadius: 10,
-                      spreadRadius: 0)
+                    color: Color.fromRGBO(0, 0, 0, 0.1),
+                    offset: Offset(0, 2),
+                    blurRadius: 10,
+                    spreadRadius: 0,
+                  )
                 ],
                 border: Border.all(
                   width: 3,

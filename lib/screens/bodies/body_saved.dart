@@ -76,8 +76,8 @@ class _BodySavedState extends State<BodySaved> {
                             margin: const EdgeInsets.all(7),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(
-                                  (_sizeOfColorItem + paddingEachColorItem) /
-                                      2),
+                                (_sizeOfColorItem + paddingEachColorItem) / 2,
+                              ),
                               border: Border.all(
                                 width: 3,
                                 color: _selectedColor == data

@@ -139,28 +139,7 @@ class WColorPicker {
       ),
       child: TextField(
         onTap: onTapInput,
-
-        //  () {
-        //   setState(() {
-        //     _showKeyBoard = true;
-        //   });
-        // },
         onChanged: onChanged,
-        // (value) {
-        //   // check case copy and paste
-        //   // kiem tra xem do dai nhu the nao
-        //   String newValue = value;
-        //   List<String> listSplitValue = value.split('');
-        //   if (listSplitValue[0] != "#") {
-        //     newValue = "#${newValue.substring(0, newValue.length)}";
-        //   }
-        //   _hexController.text = newValue;
-        //   _isValid = checkHexString(newValue);
-        //   if (_isValid) {
-        //     _handleUpdateCurrentColor();
-        //   }
-        //   setState(() {});
-        // },
         maxLength: maxLengthInput,
         keyboardType: TextInputType.none,
         controller: controller,

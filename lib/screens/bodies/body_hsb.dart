@@ -241,11 +241,12 @@ class _BodyPickerState extends State<BodyHSB> {
                 // hue widget
                 _buildTitle("Hue", _hsbHue.toStringAsFixed(0)), // °
                 SliderColor(
-                    key: _keyHue,
-                    dotSize: _dotSize,
-                    listGradientColor: COLOR_SLIDERS,
-                    offsetTracker: _offsetTrackerHue,
-                    sliderWidth: _widthColorBody),
+                  key: _keyHue,
+                  dotSize: _dotSize,
+                  listGradientColor: COLOR_SLIDERS,
+                  offsetTracker: _offsetTrackerHue,
+                  sliderWidth: _widthColorBody,
+                ),
                 // saturation widget
                 _buildTitle(
                     "Saturation", (_hsbSaturation * 100).toStringAsFixed(0)),
@@ -263,14 +264,15 @@ class _BodyPickerState extends State<BodyHSB> {
                 _buildTitle(
                     "Brightness", (_hsbBrightness * 100).toStringAsFixed(0)),
                 SliderColor(
-                    key: _keyBrightness,
-                    dotSize: _dotSize,
-                    listGradientColor: [
-                      colorBlack,
-                      HSVColor.fromAHSV(1, _hsbHue, 1, 1).toColor()
-                    ],
-                    offsetTracker: _offsetTrackerBrightness,
-                    sliderWidth: _widthColorBody),
+                  key: _keyBrightness,
+                  dotSize: _dotSize,
+                  listGradientColor: [
+                    colorBlack,
+                    HSVColor.fromAHSV(1, _hsbHue, 1, 1).toColor()
+                  ],
+                  offsetTracker: _offsetTrackerBrightness,
+                  sliderWidth: _widthColorBody,
+                ),
                 _buildPreviewColor()
               ],
             ),
@@ -286,10 +288,11 @@ class _BodyPickerState extends State<BodyHSB> {
       width: 60,
       margin: const EdgeInsets.only(top: 20),
       decoration: BoxDecoration(
-          color: HSVColor.fromAHSV(1, _hsbHue, _hsbSaturation, _hsbBrightness)
-              .toColor(),
-          borderRadius: BorderRadius.circular(30),
-          border: Border.all(width: 0.2)),
+        color: HSVColor.fromAHSV(1, _hsbHue, _hsbSaturation, _hsbBrightness)
+            .toColor(),
+        borderRadius: BorderRadius.circular(30),
+        border: Border.all(width: 0.2),
+      ),
     );
   }
 
@@ -301,15 +304,17 @@ class _BodyPickerState extends State<BodyHSB> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           WTextContent(
-              value: title,
-              textColor: widget.isLightMode
-                  ? const Color.fromRGBO(0, 0, 0, 0.5)
-                  : white05),
+            value: title,
+            textColor: widget.isLightMode
+                ? const Color.fromRGBO(0, 0, 0, 0.5)
+                : white05,
+          ),
           WTextContent(
-              value: value,
-              textColor: widget.isLightMode
-                  ? const Color.fromRGBO(0, 0, 0, 0.5)
-                  : white05),
+            value: value,
+            textColor: widget.isLightMode
+                ? const Color.fromRGBO(0, 0, 0, 0.5)
+                : white05,
+          ),
         ],
       ),
     );
