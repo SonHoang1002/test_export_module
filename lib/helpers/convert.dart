@@ -4,11 +4,14 @@ String convertColorToHexString(Color color) {
   final newHexString = color.value.toRadixString(16).toUpperCase();
   String result;
   if (newHexString.length > 2) {
-    result = newHexString.substring(2, newHexString.length);
+    if (newHexString.contains("FF") || newHexString.contains("ff")) {
+      result = newHexString.substring(2, newHexString.length);
+    } else {
+      result = newHexString;
+    }
   } else {
-    throw Exception("convertColorToHexString error: newHexString length invalid !!");
+    result = "00000000";
   }
-
   return '#$result';
 }
 

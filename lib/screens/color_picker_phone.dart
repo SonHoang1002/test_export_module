@@ -18,7 +18,11 @@ class ColorPickerPhone extends StatefulWidget {
   /// show title "Color"
   final bool isHaveTitle;
 
+  //
+  final bool containTransparent;
+
   /// current color
+  /// special case: transparent
   final Color currentColor;
 
   /// change theme of input, button, segment controls,
@@ -43,13 +47,16 @@ class ColorPickerPhone extends StatefulWidget {
   final Widget? titleWidgetRight;
 
   /// call on click to done button
-  final void Function(Color color) onDone;
+  /// color is null -> transparent color
+  final void Function(Color? color) onDone;
 
   /// call on click to save button
-  final void Function(Color color)? onColorSave;
+  /// color is null -> transparent color
+  final void Function(Color? color)? onColorSave;
 
   /// call on drag to change color
-  final void Function(Color color)? onColorChange;
+  /// color is null -> transparent color
+  final void Function(Color? color)? onColorChange;
 
   const ColorPickerPhone({
     super.key,
@@ -66,6 +73,7 @@ class ColorPickerPhone extends StatefulWidget {
     this.titleWidgetLeft,
     this.titleWidgetRight,
     this.isHaveTitle = true,
+    this.containTransparent = false,
   });
 
   @override
@@ -86,15 +94,24 @@ class _ColorPickerPhoneState extends State<ColorPickerPhone> {
   int _indexSegment = 0;
   late double _widthColorBody;
 
-  late Color _selectedColor;
+  Color? _selectedColor;
   List<Color> _listColorSaved = [];
-
+  late int _maxLengthInput;
   @override
   void initState() {
     super.initState();
     _listColorSaved = List.from(widget.listColorSaved);
     _selectedColor = widget.currentColor;
-    _hexController.text = convertColorToHexString(_selectedColor);
+    if (widget.containTransparent) {
+      _maxLengthInput = MAX_LENGTH_INPUT_2;
+    } else {
+      _maxLengthInput = MAX_LENGTH_INPUT_1;
+    }
+    if ([null].contains(_selectedColor)) {
+      _hexController.text = "";
+    } else {
+      _hexController.text = convertColorToHexString(_selectedColor!);
+    }
   }
 
   void _handleDisableKeyBoard() {
@@ -140,7 +157,7 @@ class _ColorPickerPhoneState extends State<ColorPickerPhone> {
       return;
     }
 
-    if (textSelection.start == 1 && textSelection.end == maxLengthInput) {
+    if (textSelection.start == 1 && textSelection.end == _maxLengthInput) {
       _hexController.text = newText;
       _hexController.selection = textSelection.copyWith(
         baseOffset: 2,
@@ -218,17 +235,22 @@ class _ColorPickerPhoneState extends State<ColorPickerPhone> {
       newValue = "#${newValue.substring(0, newValue.length)}";
     }
     _hexController.text = newValue;
-    _isValid = checkHexString(newValue);
+    _isValid =
+        checkHexString(newValue, containTransparent: widget.containTransparent);
     if (_isValid) {
       _handleUpdateCurrentColor();
     }
     setState(() {});
   }
 
-  void _onColorChange(Color color) {
+  void _onColorChange(Color? color) {
     _handleUnFocusKeyBoard();
     _selectedColor = color;
-    _hexController.text = convertColorToHexString(_selectedColor);
+    if ([null].contains(_selectedColor)) {
+      _hexController.text = "";
+    } else {
+      _hexController.text = convertColorToHexString(_selectedColor!);
+    }
     if (widget.onColorChange != null) {
       widget.onColorChange!(_selectedColor);
     }
@@ -241,7 +263,10 @@ class _ColorPickerPhoneState extends State<ColorPickerPhone> {
           .where((element) => element != _selectedColor)
           .toList();
     } else {
-      _listColorSaved = [_selectedColor, ...List.from(_listColorSaved)];
+      _listColorSaved = [
+        _selectedColor ?? transparent,
+        ...List.from(_listColorSaved)
+      ];
     }
     _handleDisableKeyBoard();
     setState(() {});
@@ -258,7 +283,8 @@ class _ColorPickerPhoneState extends State<ColorPickerPhone> {
     _size = MediaQuery.of(context).size;
     _widthColorBody = _size.width * 0.85;
     _isSaved = _listColorSaved.contains(_selectedColor);
-    _isValid = checkHexString(_hexController.text.trim());
+    _isValid = checkHexString(_hexController.text.trim(),
+        containTransparent: widget.containTransparent);
     isDarkMode = !widget.isLightMode;
 
     return Container(
@@ -398,7 +424,7 @@ class _ColorPickerPhoneState extends State<ColorPickerPhone> {
           isFocus: _indexSegment == 0,
         ),
         BodyHSB(
-          currentColor: _selectedColor,
+          currentColor: _selectedColor!,
           onColorChange: _onColorChange,
           isLightMode: widget.isLightMode,
           isShowKeyboard: _showKeyBoard,
@@ -436,10 +462,11 @@ class _ColorPickerPhoneState extends State<ColorPickerPhone> {
             isLightMode: widget.isLightMode,
             onEnter: (value) {
               _handeInsertText(value);
-              if (_hexController.text.trim().length > maxLengthInput - 1) {
+              if (_hexController.text.trim().length > _maxLengthInput - 1) {
                 final newText =
-                    _hexController.text.trim().substring(0, maxLengthInput);
-                if (checkHexString(newText)) {
+                    _hexController.text.trim().substring(0, _maxLengthInput);
+                if (checkHexString(newText,
+                    containTransparent: widget.containTransparent)) {
                   _selectedColor = convertHexStringToColor(newText);
                 }
                 _hexController.text = newText;

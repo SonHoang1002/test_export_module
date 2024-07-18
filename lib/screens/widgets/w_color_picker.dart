@@ -140,7 +140,7 @@ class WColorPicker {
       child: TextField(
         onTap: onTapInput,
         onChanged: onChanged,
-        maxLength: maxLengthInput,
+        maxLength: MAX_LENGTH_INPUT_1,
         keyboardType: TextInputType.none,
         controller: controller,
         textAlign: TextAlign.center,

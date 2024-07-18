@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-const int maxLengthInput = 7;
+const int MAX_LENGTH_INPUT_1 = 7;
+const int MAX_LENGTH_INPUT_2 = 9;
+
 const Duration DURATION_ANIMATED = Duration(milliseconds: 300);
 // ignore: non_constant_identifier_names
 final List<Color> COLOR_SLIDERS = [
@@ -18,7 +20,7 @@ final List<Color> COLOR_SLIDERS = [
   const HSVColor.fromAHSV(1.0, 330.0, 1.0, 1.0).toColor(),
   const HSVColor.fromAHSV(1.0, 360.0, 1.0, 1.0).toColor(),
 ];
-
+const HSVColor HSVCOLOR_TRANPARENT =   HSVColor.fromAHSV(0, 0, 0, 0);
 // ignore: constant_identifier_names
 const List<Color> ALL_COLORS = [
   Colors.amber,

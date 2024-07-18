@@ -7,19 +7,20 @@ import 'package:color_picker_android/widgets/w_slider_color.dart';
 import 'package:flutter/material.dart';
 
 class BodyPicker extends StatefulWidget {
-  final Color currentColor;
+  final Color? currentColor;
   final bool isLightMode;
-  final Function(Color color) onColorChange;
+  final Function(Color? color) onColorChange;
   final bool? isShowKeyboard;
   final bool isFocus;
 
-  const BodyPicker(
-      {super.key,
-      required this.currentColor,
-      required this.onColorChange,
-      required this.isLightMode,
-      this.isShowKeyboard,
-      required this.isFocus});
+  const BodyPicker({
+    super.key,
+    required this.currentColor,
+    required this.onColorChange,
+    required this.isLightMode,
+    this.isShowKeyboard,
+    required this.isFocus,
+  });
 
   @override
   State<BodyPicker> createState() => _BodyPickerState();
@@ -28,7 +29,7 @@ class BodyPicker extends StatefulWidget {
 class _BodyPickerState extends State<BodyPicker> {
   final double sizeOfPreviewColor = 40;
   late Size _size;
-  double _dotSize = 28;
+  final double _dotSize = 28;
   Offset _offsetTrackerCursor = const Offset(0, 0);
   Offset _offsetDotHSV = const Offset(0, 0);
 
@@ -41,12 +42,12 @@ class _BodyPickerState extends State<BodyPicker> {
   bool? _isInsideSlider;
 
   // hsv properties
-  final double _hsvAlpha = 1.0;
+  double _hsvAlpha = 1.0;
   double _hsvHue = 0.0;
   double _hsvSaturation = 0.0;
   double _hsvValue = 1.0;
   // dùng để thay đổi màu tuong phản của border bảng chọn màu HSV
-  List<double> _limitHueForBorderColors = [210, 275];
+  final List<double> _limitHueForBorderColors = [210, 275];
   //
   late double _widthColorBody;
 
@@ -54,16 +55,28 @@ class _BodyPickerState extends State<BodyPicker> {
   @override
   void initState() {
     super.initState();
-    final hsvColor = HSVColor.fromColor(widget.currentColor);
-    _hsvHue = hsvColor.hue;
-    _hsvSaturation = hsvColor.saturation;
-    _hsvValue = hsvColor.value;
+    HSVColor? hsvColor;
+    if (![null, transparent].contains(widget.currentColor)) {
+      hsvColor = HSVColor.fromColor(widget.currentColor!);
+      _hsvHue = hsvColor.hue;
+      _hsvSaturation = hsvColor.saturation;
+      _hsvValue = hsvColor.value;
+    } else {
+      _hsvHue = 0;
+      _hsvSaturation = 0;
+      _hsvValue = 0;
+    }
+
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _renderBoxHSVBoard =
           _keyHSVBoard.currentContext?.findRenderObject() as RenderBox;
       _renderBoxSlider =
           _keySlider.currentContext?.findRenderObject() as RenderBox;
-      _changePositionWithHSVColor(hsvColor);
+      if (hsvColor != null) {
+        _changePositionWithHSVColor(hsvColor);
+      } else {
+        _changePositionWithHSVColor(HSVCOLOR_TRANPARENT);
+      }
       setState(() {});
     });
   }
@@ -182,12 +195,24 @@ class _BodyPickerState extends State<BodyPicker> {
   Widget build(BuildContext context) {
     _size = MediaQuery.sizeOf(context);
     _widthColorBody = _size.width * 0.85;
+    if (![null, transparent].contains(widget.currentColor)) {
+      _hsvAlpha = 1;
+    } else {
+      _hsvAlpha = 0;
+    }
     if (!_onPanning) {
-      final hsvColor = HSVColor.fromColor(widget.currentColor);
-      _hsvHue = hsvColor.hue;
-      _hsvSaturation = hsvColor.saturation;
-      _hsvValue = hsvColor.value;
-      _changePositionWithHSVColor(hsvColor);
+      if (![null, transparent].contains(widget.currentColor)) {
+        final hsvColor = HSVColor.fromColor(widget.currentColor!);
+        _hsvHue = hsvColor.hue;
+        _hsvSaturation = hsvColor.saturation;
+        _hsvValue = hsvColor.value;
+        _changePositionWithHSVColor(hsvColor);
+      } else {
+        _hsvHue = 0;
+        _hsvSaturation = 0;
+        _hsvValue = 0;
+        _changePositionWithHSVColor(HSVCOLOR_TRANPARENT);
+      }
     }
     return AnimatedOpacity(
       opacity: widget.isFocus ? 1 : 0,

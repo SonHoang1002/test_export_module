@@ -3,9 +3,9 @@ import 'package:color_picker_android/commons/constants.dart';
 import 'package:flutter/material.dart';
 
 class BodySaved extends StatefulWidget {
-  final Color currentColor;
+  final Color? currentColor;
   final bool isLightMode;
-  final Function(Color color) onColorChange;
+  final Function(Color? color) onColorChange;
   final List<Color> listColorSaved;
   final bool isFocus;
 
@@ -23,7 +23,7 @@ class BodySaved extends StatefulWidget {
 }
 
 class _BodySavedState extends State<BodySaved> {
-  late Color _selectedColor;
+  late Color? _selectedColor;
   double _sizeOfColorItem = 30;
   late double _widthColorBody;
   final double paddingEachColorItem = 22;
@@ -36,6 +36,7 @@ class _BodySavedState extends State<BodySaved> {
 
   @override
   Widget build(BuildContext context) {
+    print("widget.listColorSaved ${widget.listColorSaved}");
     return Container(
       alignment: Alignment.topCenter,
       child: AnimatedOpacity(
@@ -93,7 +94,11 @@ class _BodySavedState extends State<BodySaved> {
                             width: _sizeOfColorItem,
                             decoration: BoxDecoration(
                               color: Color.fromRGBO(
-                                  data.red, data.green, data.blue, 0.9),
+                                data.red,
+                                data.green,
+                                data.blue,
+                                data.opacity,
+                              ),
                               border: Border.all(color: data, width: 2),
                               borderRadius:
                                   BorderRadius.circular(_sizeOfColorItem / 2),

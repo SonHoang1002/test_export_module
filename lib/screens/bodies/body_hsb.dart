@@ -8,7 +8,7 @@ import 'package:color_picker_android/widgets/w_text_content.dart';
 import 'package:flutter/material.dart';
 
 class BodyHSB extends StatefulWidget {
-  final Color currentColor;
+  final Color? currentColor;
   final bool isLightMode;
   final Function(Color color) onColorChange;
   final bool? isShowKeyboard;
@@ -47,6 +47,7 @@ class _BodyPickerState extends State<BodyHSB> {
   double _hsbSaturation = 0;
   // value of hsv Color
   double _hsbBrightness = 0;
+  double _hsbAlpha = 1;
   // status
   bool? _isInsideHue;
   bool? _isInsideSaturation;
@@ -57,17 +58,30 @@ class _BodyPickerState extends State<BodyHSB> {
   @override
   void initState() {
     super.initState();
-    final initHsbColor = HSVColor.fromColor(widget.currentColor);
-    _hsbHue = initHsbColor.hue;
-    _hsbBrightness = initHsbColor.value;
-    _hsbSaturation = initHsbColor.saturation;
+    HSVColor? initHsbColor;
+    if ([null, transparent].contains(widget.currentColor)) {
+      initHsbColor = HSVColor.fromColor(widget.currentColor!);
+      _hsbHue = initHsbColor.hue;
+      _hsbBrightness = initHsbColor.value;
+      _hsbSaturation = initHsbColor.saturation;
+    } else {
+      _hsbAlpha = 0;
+      _hsbHue = 0;
+      _hsbBrightness = 0;
+      _hsbSaturation = 0;
+    }
+
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _renderBoxHue = _keyHue.currentContext?.findRenderObject() as RenderBox;
       _renderBoxSaturation =
           _keySaturation.currentContext?.findRenderObject() as RenderBox;
       _renderBoxBrightness =
           _keyBrightness.currentContext?.findRenderObject() as RenderBox;
-      _changePositionWithHSVColor(initHsbColor);
+      if (initHsbColor != null) {
+        _changePositionWithHSVColor(initHsbColor);
+      } else {
+        _changePositionWithHSVColor(HSVCOLOR_TRANPARENT);
+      }
       setState(() {});
     });
   }
@@ -101,6 +115,20 @@ class _BodyPickerState extends State<BodyHSB> {
       _isInsideSaturation = null;
       _onPanning = false;
     });
+  }
+
+  void _limitHueAndSaturationValue() {
+    if (_hsbBrightness == 0) {
+      _hsbHue = 0;
+      _hsbSaturation = 0;
+    }
+  }
+
+  void _limitHueAndSaturationOffset() {
+    if (_offsetTrackerBrightness.dx == 0.0) {
+      _offsetTrackerSaturation = Offset(0.0, _offsetTrackerSaturation.dy);
+      _offsetTrackerHue = Offset(0.0, _offsetTrackerHue.dy);
+    }
   }
 
   void _checkInside(Offset cursorGlobalPosition) {
@@ -187,22 +215,34 @@ class _BodyPickerState extends State<BodyHSB> {
       _hsbBrightness = (_offsetTrackerBrightness.dx) / (size.width - _dotSize);
       setState(() {});
     }
+
+    print("body_hsb: $_hsbAlpha,$_hsbHue, $_hsbSaturation, $_hsbBrightness");
     widget.onColorChange(
-        HSVColor.fromAHSV(1, _hsbHue, _hsbSaturation, _hsbBrightness)
-            .toColor());
+      HSVColor.fromAHSV(_hsbAlpha, _hsbHue, _hsbSaturation, _hsbBrightness)
+          .toColor(),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     _size = MediaQuery.sizeOf(context);
     _widthColorBody = _size.width * 0.85;
+    if ([null, transparent].contains(widget.currentColor)) {
+      _hsbAlpha = 0;
+    } else {
+      _hsbAlpha = 1;
+    }
     if (!_onPanning) {
-      final initHsbColor = HSVColor.fromColor(widget.currentColor);
-      _hsbHue = initHsbColor.hue;
-      _hsbBrightness = initHsbColor.value;
-      _hsbSaturation = initHsbColor.saturation;
-
-      _changePositionWithHSVColor(initHsbColor);
+      HSVColor? initHsbColor;
+      if (![null, transparent].contains(widget.currentColor)) {
+        initHsbColor = HSVColor.fromColor(widget.currentColor!);
+        _hsbHue = initHsbColor.hue;
+        _hsbBrightness = initHsbColor.value;
+        _hsbSaturation = initHsbColor.saturation;
+        _hsbAlpha = 1;
+      } else {
+        _changePositionWithHSVColor(HSVCOLOR_TRANPARENT);
+      }
     }
     return AnimatedOpacity(
       opacity: widget.isFocus ? 1 : 0,
@@ -223,9 +263,13 @@ class _BodyPickerState extends State<BodyHSB> {
               _updatePositionAndHSBProperties(details.globalPosition);
             },
             onPanEnd: (details) {
+              _limitHueAndSaturationOffset();
+              _limitHueAndSaturationValue();
               _disableInside();
             },
             onTapUp: (details) {
+              _limitHueAndSaturationOffset();
+              _limitHueAndSaturationValue();
               _disableInside();
             },
             onTapDown: (details) {
@@ -288,7 +332,8 @@ class _BodyPickerState extends State<BodyHSB> {
       width: 60,
       margin: const EdgeInsets.only(top: 20),
       decoration: BoxDecoration(
-        color: HSVColor.fromAHSV(1, _hsbHue, _hsbSaturation, _hsbBrightness)
+        color: HSVColor.fromAHSV(
+                _hsbAlpha, _hsbHue, _hsbSaturation, _hsbBrightness)
             .toColor(),
         borderRadius: BorderRadius.circular(30),
         border: Border.all(width: 0.2),

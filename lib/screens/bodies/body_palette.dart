@@ -6,9 +6,9 @@ import 'package:color_picker_android/helpers/contain_offset.dart';
 import 'package:flutter/material.dart';
 
 class BodyPalette extends StatefulWidget {
-  final Color currentColor;
+  final Color? currentColor;
   final bool isLightMode;
-  final Function(Color color) onColorChange;
+  final void Function(Color? color) onColorChange;
   final double width;
   final bool isFocus;
   const BodyPalette({
@@ -25,7 +25,7 @@ class BodyPalette extends StatefulWidget {
 }
 
 class _BodyPaletteState extends State<BodyPalette> {
-  late Color _selectedColor;
+  late Color? _selectedColor;
   late double _sizeOfColorItem = 30;
   final int _rowOfColorBoard = 10;
   final int _columnOfColorBoard = 12;

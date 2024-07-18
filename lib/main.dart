@@ -41,6 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     _currentColor = const Color(0xFF5E2FEB);
+    // _currentColor = transparent; // const Color(0xFF5E2FEB);
   }
 
   @override
@@ -75,37 +76,27 @@ class _MyHomePageState extends State<MyHomePage> {
                     key: _keyColorPicker,
                     currentColor: _currentColor,
                     onDone: (color) {
-                      setState(() {
-                        _currentColor = color;
-                      });
+                      print("onDone: $color");
                       popNavigator(context);
                     },
                     onColorChange: (color) {},
                     listColorSaved: listSavedColor,
-                    onColorSave: (Color color) async {
+                    onColorSave: (Color? color) async {
                       // kiem tra xem co mau do trong list chua
                       if (listSavedColor.contains(color)) {
                         listSavedColor = List.from(listSavedColor
                             .where((element) => element != color)
                             .toList());
                       } else {
-                        listSavedColor = [color, ...List.from(listSavedColor)];
+                        listSavedColor = [
+                          color ?? transparent,
+                          ...List.from(listSavedColor)
+                        ];
                       }
                       await prefs.setStringList(PREFERENCE_SAVED_COLOR_KEY,
                           listSavedColor.map((e) => e.toString()).toList());
-                    },
-                    // titleWidgetLeft: Container(
-                    //   height: 30,
-                    //   width: 80,
-                    //   color: colorRed,
-                    //   margin: const EdgeInsets.only(right: 10),
-                    // ),
-                    // titleWidgetRight: Container(
-                    //   height: 30,
-                    //   width: 80,
-                    //   color: colorBlue, 
-                    // ),
-                    // isHaveTitle: false,
+                    }, 
+                    containTransparent: false,
                   );
                 },
                 backgroundColor: transparent,

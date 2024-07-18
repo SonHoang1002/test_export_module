@@ -20,6 +20,9 @@ class ColorPickerTablet extends StatefulWidget {
   /// show title "Color"
   final bool isHaveTitle;
 
+  /// contain transparent color to check
+  final bool containTransparent;
+
   /// current color
   final Color currentColor;
 
@@ -45,13 +48,13 @@ class ColorPickerTablet extends StatefulWidget {
   final Widget? titleWidgetRight;
 
   /// call on click to done button
-  final void Function(Color color) onDone;
+  final void Function(Color? color) onDone;
 
   /// call on click to save button
-  final void Function(Color color)? onColorSave;
+  final void Function(Color? color)? onColorSave;
 
   /// call on drag to change color
-  final void Function(Color color)? onColorChange;
+  final void Function(Color? color)? onColorChange;
 
   const ColorPickerTablet({
     super.key,
@@ -68,6 +71,7 @@ class ColorPickerTablet extends StatefulWidget {
     this.titleWidgetLeft,
     this.titleWidgetRight,
     this.isHaveTitle = true,
+    this.containTransparent = false,
   });
   @override
   State<ColorPickerTablet> createState() => _ColorPickerTabletState();
@@ -88,15 +92,24 @@ class _ColorPickerTabletState extends State<ColorPickerTablet> {
   int _indexSegment = 0;
   late double _widthColorBody;
 
-  late Color _selectedColor;
+  late Color? _selectedColor;
   List<Color> _listColorSaved = [];
-
+  late int _maxLengthInput;
   @override
   void initState() {
     super.initState();
     _listColorSaved = List.from(widget.listColorSaved);
     _selectedColor = widget.currentColor;
-    _hexController.text = convertColorToHexString(_selectedColor);
+    if (widget.containTransparent) {
+      _maxLengthInput = MAX_LENGTH_INPUT_2;
+    } else {
+      _maxLengthInput = MAX_LENGTH_INPUT_1;
+    }
+    if ([null].contains(_selectedColor)) {
+      _hexController.text = "";
+    } else {
+      _hexController.text = convertColorToHexString(_selectedColor!);
+    }
   }
 
   void _handleDisableKeyBoard() {
@@ -142,7 +155,7 @@ class _ColorPickerTabletState extends State<ColorPickerTablet> {
       return;
     }
 
-    if (textSelection.start == 1 && textSelection.end == maxLengthInput) {
+    if (textSelection.start == 1 && textSelection.end == _maxLengthInput) {
       _hexController.text = newText;
       _hexController.selection = textSelection.copyWith(
         baseOffset: 2,
@@ -220,17 +233,22 @@ class _ColorPickerTabletState extends State<ColorPickerTablet> {
       newValue = "#${newValue.substring(0, newValue.length)}";
     }
     _hexController.text = newValue;
-    _isValid = checkHexString(newValue);
+    _isValid =
+        checkHexString(newValue, containTransparent: widget.containTransparent);
     if (_isValid) {
       _handleUpdateCurrentColor();
     }
     setState(() {});
   }
 
-  void _onColorChange(Color color) {
+  void _onColorChange(Color? color) {
     _handleUnFocusKeyBoard();
     _selectedColor = color;
-    _hexController.text = convertColorToHexString(_selectedColor);
+    if ([null].contains(_selectedColor)) {
+      _hexController.text = "";
+    } else {
+      _hexController.text = convertColorToHexString(_selectedColor!);
+    }
     if (widget.onColorChange != null) {
       widget.onColorChange!(_selectedColor);
     }
@@ -243,7 +261,10 @@ class _ColorPickerTabletState extends State<ColorPickerTablet> {
           .where((element) => element != _selectedColor)
           .toList();
     } else {
-      _listColorSaved = [_selectedColor, ...List.from(_listColorSaved)];
+      _listColorSaved = [
+        _selectedColor ?? transparent,
+        ...List.from(_listColorSaved)
+      ];
     }
     _handleDisableKeyBoard();
     setState(() {});
@@ -261,7 +282,8 @@ class _ColorPickerTabletState extends State<ColorPickerTablet> {
     _mainSize = Size(min(600, _size.height), _size.height);
     _widthColorBody = (_mainSize.width) * 0.85;
     _isSaved = _listColorSaved.contains(_selectedColor);
-    _isValid = checkHexString(_hexController.text.trim());
+    _isValid = checkHexString(_hexController.text.trim(),
+        containTransparent: widget.containTransparent);
     return Container(
       width: double.infinity,
       color: transparent,
@@ -400,7 +422,7 @@ class _ColorPickerTabletState extends State<ColorPickerTablet> {
           isFocus: _indexSegment == 0,
         ),
         BodyHSB(
-          currentColor: _selectedColor,
+          currentColor: _selectedColor!,
           onColorChange: _onColorChange,
           isLightMode: widget.isLightMode,
           isShowKeyboard: _showKeyBoard,
@@ -438,10 +460,11 @@ class _ColorPickerTabletState extends State<ColorPickerTablet> {
             isLightMode: widget.isLightMode,
             onEnter: (value) {
               _handeInsertText(value);
-              if (_hexController.text.trim().length > maxLengthInput - 1) {
+              if (_hexController.text.trim().length > _maxLengthInput - 1) {
                 final newText =
-                    _hexController.text.trim().substring(0, maxLengthInput);
-                if (checkHexString(newText)) {
+                    _hexController.text.trim().substring(0, _maxLengthInput);
+                if (checkHexString(newText,
+                    containTransparent: widget.containTransparent)) {
                   _selectedColor = convertHexStringToColor(newText);
                 }
                 _hexController.text = newText;
