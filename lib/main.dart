@@ -35,12 +35,12 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late Color _currentColor;
+  Color? _currentColor;
   final GlobalKey _keyColorPicker = GlobalKey(debugLabel: "_keyColorPicker");
   @override
   void initState() {
     super.initState();
-    _currentColor = const Color(0xFF5E2FEB);
+    // _currentColor = const Color(0xFF5E2FEB);
     // _currentColor = transparent; // const Color(0xFF5E2FEB);
   }
 
@@ -95,8 +95,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       }
                       await prefs.setStringList(PREFERENCE_SAVED_COLOR_KEY,
                           listSavedColor.map((e) => e.toString()).toList());
-                    }, 
+                    },
                     containTransparent: false,
+                    // maxWidth: 500,
                   );
                 },
                 backgroundColor: transparent,

@@ -115,6 +115,8 @@ class _BodyPaletteState extends State<BodyPalette> {
       child: AnimatedOpacity(
         opacity: widget.isFocus ? 1 : 0,
         duration: DURATION_ANIMATED,
+      curve: CUBIC_CURVE,
+
         child: IgnorePointer(
           ignoring: !widget.isFocus,
           child: LayoutBuilder(

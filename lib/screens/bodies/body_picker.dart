@@ -217,6 +217,7 @@ class _BodyPickerState extends State<BodyPicker> {
     return AnimatedOpacity(
       opacity: widget.isFocus ? 1 : 0,
       duration: DURATION_ANIMATED,
+      curve: CUBIC_CURVE,
       child: IgnorePointer(
         ignoring: !widget.isFocus,
         child: Center(
@@ -271,17 +272,18 @@ class _BodyPickerState extends State<BodyPicker> {
                             ),
                           ),
                         ),
-                        Positioned(
-                          left: _offsetDotHSV.dx,
-                          top: _offsetDotHSV.dy,
-                          child: _buildDot(
-                            HSVColor.fromAHSV(_hsvAlpha, _hsvHue,
-                                    _hsvSaturation, _hsvValue)
-                                .toColor(),
-                            borderWidth: 3,
-                            borderColor: _renderBorderColor(),
+                        if (widget.currentColor != null)
+                          Positioned(
+                            left: _offsetDotHSV.dx,
+                            top: _offsetDotHSV.dy,
+                            child: _buildDot(
+                              HSVColor.fromAHSV(_hsvAlpha, _hsvHue,
+                                      _hsvSaturation, _hsvValue)
+                                  .toColor(),
+                              borderWidth: 3,
+                              borderColor: _renderBorderColor(),
+                            ),
                           ),
-                        ),
                       ],
                     ),
                     const SizedBox(

@@ -42,6 +42,8 @@ class _BodySavedState extends State<BodySaved> {
       child: AnimatedOpacity(
         opacity: widget.isFocus ? 1 : 0,
         duration: DURATION_ANIMATED,
+      curve: CUBIC_CURVE,
+
         child: IgnorePointer(
           ignoring: !widget.isFocus,
           child: LayoutBuilder(

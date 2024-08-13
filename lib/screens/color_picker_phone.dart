@@ -23,7 +23,7 @@ class ColorPickerPhone extends StatefulWidget {
 
   /// current color
   /// special case: transparent
-  final Color currentColor;
+  final Color? currentColor;
 
   /// change theme of input, button, segment controls,
   final Color? topicColor;
@@ -368,16 +368,18 @@ class _ColorPickerPhoneState extends State<ColorPickerPhone> {
             children: [
               // preview value hex string color
               if (widget.titleWidgetLeft != null) widget.titleWidgetLeft!,
-              WColorPicker.buildTextField(
-                key: _keyTextField,
-                controller: _hexController,
-                isLightMode: widget.isLightMode,
-                isValid: _isValid,
-                onTapInput: _onTapInput,
-                onChanged: _onChangedInput,
-              ),
+              if (_selectedColor != null)
+                WColorPicker.buildTextField(
+                  key: _keyTextField,
+                  controller: _hexController,
+                  isLightMode: widget.isLightMode,
+                  isValid: _isValid,
+                  onTapInput: _onTapInput,
+                  onChanged: _onChangedInput,
+                ),
+
               const SizedBox(width: 7),
-              _buildSaveButton(),
+              if (_selectedColor != null) _buildSaveButton(),
             ],
           ),
           Row(
@@ -424,7 +426,7 @@ class _ColorPickerPhoneState extends State<ColorPickerPhone> {
           isFocus: _indexSegment == 0,
         ),
         BodyHSB(
-          currentColor: _selectedColor!,
+          currentColor: _selectedColor,
           onColorChange: _onColorChange,
           isLightMode: widget.isLightMode,
           isShowKeyboard: _showKeyBoard,

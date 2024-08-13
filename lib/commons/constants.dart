@@ -4,6 +4,7 @@ const int MAX_LENGTH_INPUT_1 = 7;
 const int MAX_LENGTH_INPUT_2 = 9;
 
 const Duration DURATION_ANIMATED = Duration(milliseconds: 300);
+
 // ignore: non_constant_identifier_names
 final List<Color> COLOR_SLIDERS = [
   const HSVColor.fromAHSV(1.0, 0.0, 1.0, 1.0).toColor(),

@@ -249,6 +249,7 @@ class _BodyPickerState extends State<BodyHSB> {
     return AnimatedOpacity(
       opacity: widget.isFocus ? 1 : 0,
       duration: DURATION_ANIMATED,
+      curve: CUBIC_CURVE,
       child: IgnorePointer(
         ignoring: !widget.isFocus,
         child: Center(

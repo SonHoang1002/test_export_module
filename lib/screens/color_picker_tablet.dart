@@ -23,8 +23,10 @@ class ColorPickerTablet extends StatefulWidget {
   /// contain transparent color to check
   final bool containTransparent;
 
+  final double maxWidth;
+
   /// current color
-  final Color currentColor;
+  final Color? currentColor;
 
   /// change theme of input, button, segment controls,
   final Color? topicColor;
@@ -72,6 +74,7 @@ class ColorPickerTablet extends StatefulWidget {
     this.titleWidgetRight,
     this.isHaveTitle = true,
     this.containTransparent = false,
+    this.maxWidth = 600,
   });
   @override
   State<ColorPickerTablet> createState() => _ColorPickerTabletState();
@@ -279,7 +282,7 @@ class _ColorPickerTabletState extends State<ColorPickerTablet> {
   @override
   Widget build(BuildContext context) {
     _size = MediaQuery.of(context).size;
-    _mainSize = Size(min(600, _size.height), _size.height);
+    _mainSize = Size(min(widget.maxWidth, _size.height), _size.height);
     _widthColorBody = (_mainSize.width) * 0.85;
     _isSaved = _listColorSaved.contains(_selectedColor);
     _isValid = checkHexString(_hexController.text.trim(),
@@ -366,16 +369,17 @@ class _ColorPickerTabletState extends State<ColorPickerTablet> {
             children: [
               // preview value hex string color
               if (widget.titleWidgetLeft != null) widget.titleWidgetLeft!,
-              WColorPicker.buildTextField(
-                key: _keyTextField,
-                controller: _hexController,
-                isLightMode: widget.isLightMode,
-                isValid: _isValid,
-                onTapInput: _onTapInput,
-                onChanged: _onChangedInput,
-              ),
+              if (_selectedColor != null)
+                WColorPicker.buildTextField(
+                  key: _keyTextField,
+                  controller: _hexController,
+                  isLightMode: widget.isLightMode,
+                  isValid: _isValid,
+                  onTapInput: _onTapInput,
+                  onChanged: _onChangedInput,
+                ),
               const SizedBox(width: 7),
-              _buildSaveButton(),
+              if (_selectedColor != null) _buildSaveButton(),
             ],
           ),
           Row(
@@ -422,7 +426,7 @@ class _ColorPickerTabletState extends State<ColorPickerTablet> {
           isFocus: _indexSegment == 0,
         ),
         BodyHSB(
-          currentColor: _selectedColor!,
+          currentColor: _selectedColor,
           onColorChange: _onColorChange,
           isLightMode: widget.isLightMode,
           isShowKeyboard: _showKeyBoard,
