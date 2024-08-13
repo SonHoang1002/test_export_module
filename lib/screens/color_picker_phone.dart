@@ -21,6 +21,9 @@ class ColorPickerPhone extends StatefulWidget {
   //
   final bool containTransparent;
 
+  /// only set value of [currentColor] for [_selectedColor]
+  final bool isOnlyMappingCurrentColor;
+
   /// current color
   /// special case: transparent
   final Color? currentColor;
@@ -74,6 +77,7 @@ class ColorPickerPhone extends StatefulWidget {
     this.titleWidgetRight,
     this.isHaveTitle = true,
     this.containTransparent = false,
+    this.isOnlyMappingCurrentColor = false,
   });
 
   @override
@@ -97,11 +101,12 @@ class _ColorPickerPhoneState extends State<ColorPickerPhone> {
   Color? _selectedColor;
   List<Color> _listColorSaved = [];
   late int _maxLengthInput;
+
   @override
   void initState() {
     super.initState();
     _listColorSaved = List.from(widget.listColorSaved);
-    _selectedColor = widget.currentColor;
+
     if (widget.containTransparent) {
       _maxLengthInput = MAX_LENGTH_INPUT_2;
     } else {
@@ -286,7 +291,9 @@ class _ColorPickerPhoneState extends State<ColorPickerPhone> {
     _isValid = checkHexString(_hexController.text.trim(),
         containTransparent: widget.containTransparent);
     isDarkMode = !widget.isLightMode;
-
+    if (widget.isOnlyMappingCurrentColor) {
+      _selectedColor = widget.currentColor;
+    }
     return Container(
       height: double.infinity,
       width: double.infinity,

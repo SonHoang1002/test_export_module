@@ -25,7 +25,7 @@ class CustomKeyboardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Duration duration = const Duration(milliseconds: 250);
+    Duration duration = const Duration(milliseconds: 300);
     return LayoutBuilder(
       builder: (context, constr) {
         sizeOfKeyboard = width - 12;

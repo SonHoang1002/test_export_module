@@ -25,6 +25,9 @@ class ColorPickerTablet extends StatefulWidget {
 
   final double maxWidth;
 
+  /// only set value of [currentColor] for [_selectedColor]
+  final bool isOnlyMappingCurrentColor;
+
   /// current color
   final Color? currentColor;
 
@@ -75,6 +78,7 @@ class ColorPickerTablet extends StatefulWidget {
     this.isHaveTitle = true,
     this.containTransparent = false,
     this.maxWidth = 600,
+    this.isOnlyMappingCurrentColor = false,
   });
   @override
   State<ColorPickerTablet> createState() => _ColorPickerTabletState();
@@ -287,6 +291,9 @@ class _ColorPickerTabletState extends State<ColorPickerTablet> {
     _isSaved = _listColorSaved.contains(_selectedColor);
     _isValid = checkHexString(_hexController.text.trim(),
         containTransparent: widget.containTransparent);
+    if (widget.isOnlyMappingCurrentColor) {
+      _selectedColor = widget.currentColor;
+    }
     return Container(
       width: double.infinity,
       color: transparent,
