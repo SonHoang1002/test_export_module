@@ -106,7 +106,9 @@ class _ColorPickerTabletState extends State<ColorPickerTablet> {
   void initState() {
     super.initState();
     _listColorSaved = List.from(widget.listColorSaved);
-    _selectedColor = widget.currentColor;
+     if (widget.isOnlyMappingCurrentColor) {
+      _selectedColor = widget.currentColor;
+    }
     if (widget.containTransparent) {
       _maxLengthInput = MAX_LENGTH_INPUT_2;
     } else {

@@ -28,6 +28,9 @@ class ColorPickerPhone extends StatefulWidget {
   /// special case: transparent
   final Color? currentColor;
 
+  // /// Color is set
+  // final Color? initColor;
+
   /// change theme of input, button, segment controls,
   final Color? topicColor;
 
@@ -106,7 +109,9 @@ class _ColorPickerPhoneState extends State<ColorPickerPhone> {
   void initState() {
     super.initState();
     _listColorSaved = List.from(widget.listColorSaved);
-
+    if (widget.isOnlyMappingCurrentColor) {
+      _selectedColor = widget.currentColor;
+    }
     if (widget.containTransparent) {
       _maxLengthInput = MAX_LENGTH_INPUT_2;
     } else {
@@ -288,8 +293,10 @@ class _ColorPickerPhoneState extends State<ColorPickerPhone> {
     _size = MediaQuery.of(context).size;
     _widthColorBody = _size.width * 0.85;
     _isSaved = _listColorSaved.contains(_selectedColor);
-    _isValid = checkHexString(_hexController.text.trim(),
-        containTransparent: widget.containTransparent);
+    _isValid = checkHexString(
+      _hexController.text.trim(),
+      containTransparent: widget.containTransparent,
+    );
     isDarkMode = !widget.isLightMode;
     if (widget.isOnlyMappingCurrentColor) {
       _selectedColor = widget.currentColor;
