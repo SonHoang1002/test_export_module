@@ -1,25 +1,31 @@
 import 'package:flutter/material.dart';
 
 String convertColorToHexString(Color color) {
-  final newHexString = color.value.toRadixString(16).toUpperCase();
-  String result;
-  if (newHexString.length > 2) {
-    if (newHexString.contains("FF") || newHexString.contains("ff")) {
-      result = newHexString.substring(2, newHexString.length);
-    } else {
-      result = newHexString;
-    }
-  } else {
-    result = "00000000";
-  }
-  return '#$result';
+  // Lấy các thành phần RGBA từ đối tượng `Color`
+  final r = color.red.toRadixString(16).padLeft(2, '0').toUpperCase();
+  final g = color.green.toRadixString(16).padLeft(2, '0').toUpperCase();
+  final b = color.blue.toRadixString(16).padLeft(2, '0').toUpperCase();
+  final a = color.alpha.toRadixString(16).padLeft(2, '0').toUpperCase();
+
+  // Nếu alpha là "FF", loại bỏ alpha khỏi kết quả
+  return a == "FF" ? "#$r$g$b" : "#$a$r$g$b";
 }
 
-/// String [value] is format: #7A32BC || 7A32BC
+/// Chuyển đổi chuỗi HEX thành `Color`
+/// Chuỗi [value] có định dạng: #RRGGBB, RRGGBB, #AARRGGBB hoặc AARRGGBB
 Color convertHexStringToColor(String value) {
-  String newValue = value;
-  if (value.contains("#")) {
-    newValue = value.substring(1, value.length);
+  try {
+    // Loại bỏ ký tự '#' nếu tồn tại
+    final normalizedValue = value.startsWith("#") ? value.substring(1) : value;
+
+    // Xác định nếu chỉ có RRGGBB thì thêm "FF" (alpha mặc định)
+    final hasAlpha = normalizedValue.length == 8;
+    final hexColor = hasAlpha ? normalizedValue : "FF$normalizedValue";
+
+    // Phân tích chuỗi thành số nguyên
+    return Color(int.parse("0x$hexColor"));
+  } catch (e) {
+    // Xử lý lỗi và trả về giá trị mặc định
+    return Colors.transparent;
   }
-  return Color(int.parse("0xFF$newValue"));
 }

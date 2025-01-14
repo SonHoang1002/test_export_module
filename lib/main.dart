@@ -1,6 +1,7 @@
 import 'package:color_picker_android/color_picker_flutter.dart';
 import 'package:color_picker_android/commons/colors.dart';
 import 'package:color_picker_android/commons/constants.dart';
+import 'package:color_picker_android/helpers/convert.dart';
 import 'package:color_picker_android/helpers/navigator_route.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -64,8 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
               List<String> listColorString =
                   prefs.getStringList(PREFERENCE_SAVED_COLOR_KEY) ?? [];
               List<Color> listSavedColor = listColorString
-                  .map((e) => Color(
-                      int.parse(e.split('(0x')[1].split(')')[0], radix: 16)))
+                  .map((e) => convertHexStringToColor(e))
                   .toList();
               // ignore: use_build_context_synchronously
               showModalBottomSheet(
@@ -93,8 +93,12 @@ class _MyHomePageState extends State<MyHomePage> {
                           ...List.from(listSavedColor)
                         ];
                       }
-                      await prefs.setStringList(PREFERENCE_SAVED_COLOR_KEY,
-                          listSavedColor.map((e) => e.toString()).toList());
+                      await prefs.setStringList(
+                        PREFERENCE_SAVED_COLOR_KEY,
+                        listSavedColor
+                            .map((e) => convertColorToHexString(e))
+                            .toList(),
+                      );
                     },
                     containTransparent: false,
                     // maxWidth: 500,
